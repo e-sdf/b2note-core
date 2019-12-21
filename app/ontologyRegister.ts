@@ -41,7 +41,9 @@ function mkBroadSolrQueryUrl(query: string): string {
 
 export async function getExactOntologies(query: string): Promise<Array<OntologyItem>> {
   const resp = await axios.get(mkExactSolrQueryUrl(query));
-  return resp.data.response.docs;
+  const ontologies = resp.data.response.docs;
+  const groups = _.groupBy(ontologies, (i) => i.labels.toLowerCase());
+  return groups[query];
 }
 
 export async function getMatchingOntologies(query: string): Promise<Array<OntologyItem>> {
