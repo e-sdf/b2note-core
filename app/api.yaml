@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  description: B2NOTE Annotation Service API
+  version: "1.0.0"
+  title: B2NOTE Annotation API
+  contact:
+    email: ylefranc@esciencefactory.com 
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/B2Note/B2Note/1.0.0
+  - url: "https://b2note.bsc.es/api/v1"
+tags:
+  - name: annotation
+  - name: user
+paths:
+  /annotations:
+    options:
+      tags:
+        - annotation
+      summary: Get request options
+      responses:
+        "200":
+          description: Returns a list of possible request types
+    get:
+      tags:
+        - annotation
+      summary: Get all annotations
+      operationId: getAnnotations
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          required: false
+          description: User ID submitting the query. Used for filtering using creator-filter
+        - in: query
+          name: target-source
+          schema:
+            type: string
+          required: false
+          description: Annotations just for this target source URL 
+        - in: query
+          name: creator-filter
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [mine, others]
+          description: Filter relative to user
+        - in: query
+          name: type-filter
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [semantic, keyword, comment]
+          description: Type of annotations to include in the result
+      responses:
+        "200":
+          description: Returns a list of annotations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Annotation"
+externalDocs:
+  description: Find out more about B2NOTE
+  url: "https://b2note.bsc.es/"
+components:
+  schemas:
+    Annotation:
+      type: object
+      properties:
+        id:
+          type: string
+    Annotations:
+      type: array
+      items: 
+        $ref: "#/components/schemas/Annotation"
