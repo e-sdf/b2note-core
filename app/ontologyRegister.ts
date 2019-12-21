@@ -18,7 +18,17 @@ export interface OntologyItem {
    "norm(labels)": number;
 }
 
-function mkSolrQueryUrl(query: string): string {
+function mkExactSolrQueryUrl(query: string): string {
+  const q = `(labels:"${query}")`;
+  const notErrors = "%20AND%20NOT%20(labels:/Error[0-9].*/)";
+  const sort = _.words(query).length <= 1 ? "&sort=norm(labels) desc" : "";
+  const flags = "&fl=labels,uris,ontology_acronym,short_form,synonyms,norm(labels)&wt=json&indent=true&rows=1000";
+  const res = solrUrl + "?q=(" + q + notErrors + ")" + sort + flags;
+  console.log(res);
+  return res;
+}
+
+function mkBroadSolrQueryUrl(query: string): string {
   const q = 
     (query.length <= 4 && _.words(query).length <= 1) ? `(labels:/${query}.*/)`
     : `(labels:"${query}"^100%20OR%20labels:${query}*^20%20OR%20text_auto:/${query}.*/^10%20OR%20labels:*${query}*)`;
@@ -29,8 +39,13 @@ function mkSolrQueryUrl(query: string): string {
   return res;
 }
 
-export async function getOntologies(query: string): Promise<Array<OntologyItem>> {
-  const resp = await axios.get(mkSolrQueryUrl(query));
+export async function getExactOntologies(query: string): Promise<Array<OntologyItem>> {
+  const resp = await axios.get(mkExactSolrQueryUrl(query));
+  return resp.data.response.docs;
+}
+
+export async function getMatchingOntologies(query: string): Promise<Array<OntologyItem>> {
+  const resp = await axios.get(mkBroadSolrQueryUrl(query));
   return resp.data.response.docs;
 }
 
