@@ -5,7 +5,7 @@ const solrUrl = "https://b2note.bsc.es/solr/b2note_index/select";
 
 export interface OntologyInfo {
   labels: string;
-  description: string;
+  descriptions: Array<string>;
   shortForm: string;
   ontologyName: string;
   ontologyAcronym: string;
@@ -31,11 +31,12 @@ function mkSolrQueryUrl(query: string): string {
   return res;
 }
 
-export async function getOntologies(query: string): Promise<Array<OntologyInfo>> {
-  const resp = await axios.get(mkSolrQueryUrl(query));
-  const ontologies: Array<OntologyInfo> = resp.data.response.docs.map((o: any) => ({
+export type OntologyDict = Record<string, Array<OntologyInfo>>
+
+function resultToDict(docs: any): OntologyDict {
+  const ontologies: Array<OntologyInfo> = docs.map((o: any): OntologyInfo => ({
     labels: o.labels || "",
-    description: o.description || "",
+    descriptions: o.description || "",
     shortForm: o.short_form || "",
     ontologyName: o.ontology_name || "",
     ontologyAcronym: o.ontology_acronym || "",
@@ -43,12 +44,13 @@ export async function getOntologies(query: string): Promise<Array<OntologyInfo>>
     uris: o.uris || ""
   }));
   const groups = _.groupBy(ontologies, o => o.labels.toLowerCase());
-  return groups[query];
+  return groups;
 }
 
-export async function getMatchingOntologies(query: string): Promise<Array<OntologyInfo>> {
+export async function getOntologies(query: string): Promise<OntologyDict> {
   const resp = await axios.get(mkSolrQueryUrl(query));
-  return resp.data.response.docs;
+  const ontologies = resultToDict(resp.data?.response?.docs);
+  return ontologies;
 }
 
 // Getting ontology info {{{1
@@ -59,16 +61,9 @@ export function getInfo(ontologyUri: string): Promise<OntologyInfo> {
     axios.get(queryUrl).then(
       res => {
         if (res?.data?.response?.docs?.length > 0) {
-          const info = res.data.response.docs[0];
-          resolve({
-            labels: info.labels || "",
-            description: info.description || "",
-            shortForm: info.short_form || "",
-            ontologyName: info.ontology_name || "",
-            ontologyAcronym: info.ontology_acronym || "",
-            synonyms: info.synonyms || [],
-            uris: info.uris || ""
-          });
+          const info = resultToDict(res.data.response.docs);
+          const key = Object.keys(info)[0];
+          resolve(info[key][0]);
         } else {
           reject("SOLR query returned 0 results for " + queryUrl);
         }
