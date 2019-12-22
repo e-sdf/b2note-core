@@ -3,58 +3,8 @@ import axios from "axios";
 
 const solrUrl = "https://b2note.bsc.es/solr/b2note_index/select";
 
-// SOLR requires a non-standard encoding where just # and " are encoded
-function encodeSolrQuery(uri: string): string {
-  return uri.replace(/#/g, "%23").replace(/"/g, "%22");
-}
-
-// Getting ontologies {{{1
-
-export interface OntologyItem {
-   short_form: string;
-   labels: string;
-   ontology_acronym: string;
-   uris: string;
-   "norm(labels)": number;
-}
-
-function mkExactSolrQueryUrl(query: string): string {
-  const q = `(labels:"${query}")`;
-  const notErrors = "%20AND%20NOT%20(labels:/Error[0-9].*/)";
-  const sort = _.words(query).length <= 1 ? "&sort=norm(labels) desc" : "";
-  const flags = "&fl=labels,uris,ontology_acronym,short_form,synonyms,norm(labels)&wt=json&indent=true&rows=1000";
-  const res = solrUrl + "?q=(" + q + notErrors + ")" + sort + flags;
-  console.log(res);
-  return res;
-}
-
-function mkBroadSolrQueryUrl(query: string): string {
-  const q = 
-    (query.length <= 4 && _.words(query).length <= 1) ? `(labels:/${query}.*/)`
-    : `(labels:"${query}"^100%20OR%20labels:${query}*^20%20OR%20text_auto:/${query}.*/^10%20OR%20labels:*${query}*)`;
-  const notErrors = "%20AND%20NOT%20(labels:/Error[0-9].*/)";
-  const sort = _.words(query).length <= 1 ? "&sort=norm(labels) desc" : "";
-  const flags = "&fl=labels,uris,ontology_acronym,short_form,synonyms,norm(labels)&wt=json&indent=true&rows=1000";
-  const res = solrUrl + "?q=(" + q + notErrors + ")" + sort + flags;
-  return res;
-}
-
-export async function getExactOntologies(query: string): Promise<Array<OntologyItem>> {
-  const resp = await axios.get(mkExactSolrQueryUrl(query));
-  const ontologies = resp.data.response.docs;
-  const groups = _.groupBy(ontologies, (i) => i.labels.toLowerCase());
-  return groups[query];
-}
-
-export async function getMatchingOntologies(query: string): Promise<Array<OntologyItem>> {
-  const resp = await axios.get(mkBroadSolrQueryUrl(query));
-  return resp.data.response.docs;
-}
-
-// Getting ontology info {{{1
-
 export interface OntologyInfo {
-  label: string;
+  labels: string;
   description: string;
   shortForm: string;
   ontologyName: string;
@@ -63,6 +13,46 @@ export interface OntologyInfo {
   uris: string;
 }
 
+// SOLR requires a non-standard encoding where just # and " are encoded
+function encodeSolrQuery(uri: string): string {
+  return uri.replace(/#/g, "%23").replace(/"/g, "%22");
+}
+
+// Getting ontologies {{{1
+
+function mkSolrQueryUrl(query: string): string {
+  const q = 
+    (query.length <= 4 && _.words(query).length <= 1) ? `(labels:/${query}.*/)`
+    : `(labels:"${query}"^100%20OR%20labels:${query}*^20%20OR%20text_auto:/${query}.*/^10%20OR%20labels:*${query}*)`;
+  const notErrors = "%20AND%20NOT%20(labels:/Error[0-9].*/)";
+  const sort = _.words(query).length <= 1 ? "&sort=norm(labels) desc" : "";
+  const flags = "&wt=json&indent=true&rows=1000";
+  const res = solrUrl + "?q=(" + q + notErrors + ")" + sort + flags;
+  return res;
+}
+
+export async function getOntologies(query: string): Promise<Array<OntologyInfo>> {
+  const resp = await axios.get(mkSolrQueryUrl(query));
+  const ontologies: Array<OntologyInfo> = resp.data.response.docs.map((o: any) => ({
+    labels: o.labels || "",
+    description: o.description || "",
+    shortForm: o.short_form || "",
+    ontologyName: o.ontology_name || "",
+    ontologyAcronym: o.ontology_acronym || "",
+    synonyms: o.synonyms || [],
+    uris: o.uris || ""
+  }));
+  const groups = _.groupBy(ontologies, o => o.labels.toLowerCase());
+  return groups[query];
+}
+
+export async function getMatchingOntologies(query: string): Promise<Array<OntologyInfo>> {
+  const resp = await axios.get(mkSolrQueryUrl(query));
+  return resp.data.response.docs;
+}
+
+// Getting ontology info {{{1
+
 export function getInfo(ontologyUri: string): Promise<OntologyInfo> {
   return new Promise((resolve, reject) => {
     const queryUrl = encodeSolrQuery(solrUrl + '?q=uris:("' + ontologyUri + '")&rows=100&wt=json');
@@ -70,9 +60,8 @@ export function getInfo(ontologyUri: string): Promise<OntologyInfo> {
       res => {
         if (res?.data?.response?.docs?.length > 0) {
           const info = res.data.response.docs[0];
-          console.log(info.synonyms);
           resolve({
-            label: info.labels || "",
+            labels: info.labels || "",
             description: info.description || "",
             shortForm: info.short_form || "",
             ontologyName: info.ontology_name || "",
