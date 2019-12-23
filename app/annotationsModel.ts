@@ -1,12 +1,7 @@
-import * as sModel from "./searchModel";
-
-// Endpoints {{{1
+// Annotating {{{1
 
 export const annotationsUrl = "/annotations";
-export const searchUrl = "/search";
 export const targetsUrl = "/targets";
-
-// Types {{{1
 
 export interface Target {
   pid: string;
@@ -127,7 +122,6 @@ export interface AnRecord {
   type: string;
 }
 
-
 export function mkSemanticAnBody(sources: Array<string>, value: string): AnCompositeBody {
   const specificItems = sources.map(source => mkAnBodyItemSpecific(source));
   const textualItem = mkAnBodyItemTextual(value);
@@ -140,6 +134,10 @@ export function mkKeywordAnBody(value: string): AnTextualBody {
 
 export function mkCommentAnBody(value: string): AnTextualBody {
   return mkTextualBody(value, PurposeType.COMMENTING);
+}
+
+export function mkTimestamp(): string {
+  return (new Date()).toISOString();
 }
 
 export function mkAnRecord(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType): AnRecord {
@@ -158,18 +156,22 @@ export function mkAnRecord(body: AnBody, target: AnTarget, creator: AnCreator, g
   };
 }
 
-// Record Creation {{{1
-
-export function mkTimestamp(): string {
-  return (new Date()).toISOString();
-}
-
-// Requests parameters {{{1
-
 export enum TypeFilter {
   SEMANTIC = "semantic",
   KEYWORD = "keyword",
   COMMENT = "comment"
+}
+
+export enum Format { JSONLD = "json-ld", RDF = "rdf-xml" }
+
+export function mkFileExt(format: Format): string {
+  return (
+    format === Format.JSONLD ?
+      ".jsonld"
+    : format === Format.RDF ?
+      ".rdf"
+    : (() => { throw new Error("Uknown format"); return "txt"; })()
+  );
 }
 
 export interface GetQuery {
@@ -177,6 +179,8 @@ export interface GetQuery {
   creator?: string;
   "target-source"?: string;
   value?: string;
+  format?: DownloadFormat;
+  download?: boolean;
 }
 
 export interface TargetsQuery {
@@ -230,4 +234,11 @@ export function getSources(anRecord: AnRecord): Array<string> {
     return [];
   }
 }
+
+// Conversion {{{1
+
+export function annotations2RDF(anl: Array<AnRecord>): string {
+  return "<xml>RDF</xml>";
+}
+
 
