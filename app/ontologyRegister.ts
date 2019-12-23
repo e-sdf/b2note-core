@@ -43,7 +43,8 @@ function resultToDict(docs: any): OntologyDict {
     synonyms: o.synonyms || [],
     uris: o.uris || ""
   }));
-  const groups = _.groupBy(ontologies, o => o.labels.toLowerCase());
+  const ontologiesUniq = _.uniqBy(ontologies, "uris");
+  const groups = _.groupBy(ontologiesUniq, o => o.labels.toLowerCase());
   return groups;
 }
 
