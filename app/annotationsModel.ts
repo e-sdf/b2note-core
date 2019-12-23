@@ -179,7 +179,7 @@ export interface GetQuery {
   creator?: string;
   "target-source"?: string;
   value?: string;
-  format?: DownloadFormat;
+  format?: Format;
   download?: boolean;
 }
 
