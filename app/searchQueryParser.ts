@@ -61,6 +61,5 @@ export function type2marker(anType: SearchType): string {
     [SearchType.COMMENT]: () => "c",
     [SearchType.REGEX]: () => "r"
   });
-  }
 }
 
