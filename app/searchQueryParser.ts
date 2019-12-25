@@ -1,4 +1,5 @@
 import * as peg from "pegjs";
+import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import { SearchType, Sexpr, BiOperatorType, UnOperatorType } from "./searchModel";
 
 export interface ParseError {
@@ -54,12 +55,12 @@ export function parse(exp: string): ParseResult {
 }
 
 export function type2marker(anType: SearchType): string {
-  switch (anType) {
-    case SearchType.SEMANTIC: return "s";
-    case SearchType.KEYWORD: return "k";
-    case SearchType.COMMENT: return "c";
-    case SearchType.REGEX: return "r";
-    default: throw new Error("Unknown type");
+  return matchSwitch(anType, {
+    [SearchType.SEMANTIC]: () => "s",
+    [SearchType.KEYWORD]: () => "k",
+    [SearchType.COMMENT]: () => "c",
+    [SearchType.REGEX]: () => "r"
+  });
   }
 }
 
