@@ -1,3 +1,4 @@
+import { matchSwitch } from '@babakness/exhaustive-type-checking';
 // Annotating {{{1
 
 export const annotationsUrl = "/annotations";
@@ -165,13 +166,10 @@ export enum TypeFilter {
 export enum Format { JSONLD = "json-ld", RDF = "rdf-xml" }
 
 export function mkFileExt(format: Format): string {
-  return (
-    format === Format.JSONLD ?
-      ".jsonld"
-    : format === Format.RDF ?
-      ".rdf"
-    : (() => { throw new Error("Uknown format"); return "txt"; })()
-  );
+  return matchSwitch(format, {
+    [Format.JSONLD]: () => "jsonld",
+    [Format.RDF]: () => "rdf"
+  });
 }
 
 export interface GetQuery {
