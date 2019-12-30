@@ -41,6 +41,14 @@ export function mkAnBodyItemTextual(value: string): AnBodyItemTextual {
 
 export type AnBodyItem = AnBodyItemSpecific | AnBodyItemTextual;
 
+export function isSpecificResourceBodyItem(bodyItem: AnBodyItem): boolean {
+  return bodyItem.type === AnBodyItemType.SPECIFIC_RESOURCE;
+}
+
+export function isTextualBodyItem(bodyItem: AnBodyItem): boolean {
+  return bodyItem.type === AnBodyItemType.TEXTUAL_BODY;
+}
+
 export enum PurposeType {
   TAGGING = "tagging",
   COMMENTING = "commenting"
@@ -157,7 +165,7 @@ export function mkAnRecord(body: AnBody, target: AnTarget, creator: AnCreator, g
   };
 }
 
-export enum TypeFilter {
+export enum AnRecordType {
   SEMANTIC = "semantic",
   KEYWORD = "keyword",
   COMMENT = "comment"
@@ -173,7 +181,7 @@ export function mkFileExt(format: Format): string {
 }
 
 export interface GetQuery {
-  type?: Array<TypeFilter>;
+  type?: Array<AnRecordType>;
   creator?: string;
   "target-source"?: string;
   value?: string;
@@ -201,6 +209,14 @@ export function isKeyword(anRecord: AnRecord): boolean {
 
 export function isComment(anRecord: AnRecord): boolean {
   return anRecord.motivation === PurposeType.COMMENTING && anRecord.body.type === AnBodyItemType.TEXTUAL_BODY;
+}
+
+export function getAnType(anRecord: AnRecord): AnRecordType {
+  return (
+      isSemantic(anRecord) ? AnRecordType.SEMANTIC 
+    : isKeyword(anRecord) ? AnRecordType.KEYWORD
+    : AnRecordType.COMMENT
+  );
 }
 
 export function getLabel(anRecord: AnRecord): string {
