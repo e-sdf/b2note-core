@@ -31,15 +31,20 @@ tag
 = "s:" value:value synonymsFlag:"+s"? { return { type: "${SearchType.SEMANTIC}", value, ...( synonymsFlag ? { synonymsFlag: true } : { synonymsFlag: false }) }; }
   / "k:" value:value { return { type: "${SearchType.KEYWORD}", value }; }
   / "c:" value:value { return { type: "${SearchType.COMMENT}", value }; }
-  / "r:/" value:value "/" { return { type: "${SearchType.REGEX}", value }; }
+  / "r:/" regex:regex "/" { return { type: "${SearchType.REGEX}", regex }; }
 
 value
   = val:[a-zA-Z0-9]+ { return val.join(""); }
   / '"' val:[^"]+ '"' { return val.join(""); }
 
+regex
+  = val:[a-zA-Z0-9 \^$*+?.()]+ { return val.join(""); }
+
 white
   = [  ]*
 `;
+
+// = val:[a-zA-Z0-9 \\^$*+?.\[\]()]+ { return val.join(""); }
 
 const parser = peg.generate(grammar);
 
