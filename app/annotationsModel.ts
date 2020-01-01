@@ -249,10 +249,5 @@ export function getSources(anRecord: AnRecord): Array<string> {
   }
 }
 
-// Conversion {{{1
-
-export function annotations2RDF(anl: Array<AnRecord>): string {
-  return "<xml>RDF</xml>";
-}
 
 
