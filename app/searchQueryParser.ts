@@ -31,7 +31,7 @@ tag
 = "s:" value:value synonymsFlag:"+s"? { return { type: "${SearchType.SEMANTIC}", value, ...( synonymsFlag ? { synonymsFlag: true } : { synonymsFlag: false }) }; }
   / "k:" value:value { return { type: "${SearchType.KEYWORD}", value }; }
   / "c:" value:value { return { type: "${SearchType.COMMENT}", value }; }
-  / "r:/" regex:regex "/" { return { type: "${SearchType.REGEX}", regex }; }
+  / "r:/" value:regex "/" { return { type: "${SearchType.REGEX}", value }; }
 
 value
   = val:[a-zA-Z0-9]+ { return val.join(""); }
