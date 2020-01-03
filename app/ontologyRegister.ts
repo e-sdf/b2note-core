@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import _ from "lodash";
 import axios from "axios";
 
 const solrUrl = "https://b2note.bsc.es/solr/b2note_index/select";
@@ -12,6 +12,8 @@ export interface OntologyInfo {
   synonyms: Array<string>;
   uris: string;
 }
+
+export type OntologyDict = Record<string, Array<OntologyInfo>>
 
 // SOLR requires a non-standard encoding where just # and " are encoded
 function encodeSolrQuery(uri: string): string {
@@ -30,8 +32,6 @@ function mkSolrQueryUrl(query: string): string {
   const res = solrUrl + "?q=(" + q + notErrors + ")" + sort + flags;
   return res;
 }
-
-export type OntologyDict = Record<string, Array<OntologyInfo>>
 
 function resultToDict(docs: any): OntologyDict {
   const ontologies: Array<OntologyInfo> = docs.map((o: any): OntologyInfo => ({
