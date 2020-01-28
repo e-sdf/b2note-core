@@ -1,3 +1,5 @@
+export const profileUrl = "/profile";
+
 export enum Experience {
   BEGINNER = "beginner",
   INTERMEDIATE = "intermediate",
