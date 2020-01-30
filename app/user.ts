@@ -2,7 +2,7 @@ export const profileUrl = "/profile";
 
 export interface User {
   id: string;
-  token: string|undefined;
+  accessToken: string|undefined;
 }
 
 export enum Experience {
