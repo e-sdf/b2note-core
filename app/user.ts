@@ -5,6 +5,11 @@ export interface User {
   accessToken: string;
 }
 
+export const NO_USER: User = {
+  id: "",
+  accessToken: ""
+};
+
 export enum Experience {
   BEGINNER = "beginner",
   INTERMEDIATE = "intermediate",
