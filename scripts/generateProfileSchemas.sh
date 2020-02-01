@@ -1,7 +1,7 @@
 #!/bin/bash
 
 D="app"
-PF="$D/profile.ts"
+PF="$D/user.ts"
 O="--topRef --noExtraProps"
 
 # Schema with optional fields for patch validations
