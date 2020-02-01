@@ -23,18 +23,18 @@ function mkGenerator(): [string, Record<string, any>] {
   }];
 }
 
-function mkCreator(nick: string): [string, Record<string, any>] {
-  const uuid = uuidv5(nick, NS);
+function mkCreator(id: string): [string, Record<string, any>] {
+  const uuid = uuidv5(id, NS);
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
       "@rdf:resource": "http://xmlns.com/foaf/0.1/Person",
-      "@ns3:nick": nick
+      "@ns3:openid": id
     }
   }];
 }
 
-function mkPidSource(pid: string, source: string) {
+function mkPidSource(pid: string, source: string): any {
   return {
     "@rdf:about": pid,
     "ns1:hasSource": {
@@ -154,7 +154,7 @@ function mkBody(an: AnRecord): [string, Record<string, any>, any[]] {
 
 function mkDescItems(an: AnRecord): any[] {
   const [generatorUUID, generator] = mkGenerator();
-  const [creatorUUID, creator] = mkCreator(an.creator.nickname);
+  const [creatorUUID, creator] = mkCreator(an.creator.id);
   const [bodyUUID, body, bodyItems] = mkBody(an);
   
   return [
