@@ -2,7 +2,7 @@
 
 D="app"
 HF="$D/handleModel.ts"
-O="--topRef --noExtraProps"
+O="--topRef"
 
 S="handleModel.schema.js"
 F="$D/$S"

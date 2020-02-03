@@ -1,6 +1,6 @@
 export interface HandleData {
   format: string;
-  value: string;
+  value: string|Record<string, any>;
 }
 
 export interface HandleValues {
