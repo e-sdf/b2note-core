@@ -3,6 +3,7 @@ import { matchSwitch } from '@babakness/exhaustive-type-checking';
 
 export const annotationsUrl = "/annotations";
 export const targetsUrl = "/targets";
+export const resolveSourceUrl = "/resolve-source";
 
 export interface Target {
   pid: string;
