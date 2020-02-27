@@ -1,6 +1,7 @@
 import * as peg from "pegjs";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import { SearchType, Sexpr, BiOperatorType, UnOperatorType } from "./searchModel";
+import type { Sexpr } from "./searchModel";
+import { SearchType, BiOperatorType, UnOperatorType } from "./searchModel";
 
 export interface ParseError {
   message: string;

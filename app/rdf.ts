@@ -3,7 +3,8 @@ import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { v5 as uuidv5 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import { AnRecord, getAnType, AnRecordType, getSources, getLabel, isComment } from "./annotationsModel";
+import type { AnRecord } from "./annotationsModel";
+import { AnRecordType, getAnType, getSources, getLabel, isComment } from "./annotationsModel";
 
 const NS="b9166f20-c23f-41ef-93ab-632aa4767ad2";
 
