@@ -1,7 +1,7 @@
 import _ from "lodash";
 import xml from "xmlbuilder";
-import uuidv4 from "uuid/v4";
-import uuidv5 from "uuid/v5";
+import { v4 as uuidv4 } from "uuid";
+import { v5 as uuidv5 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import { AnRecord, getAnType, AnRecordType, getSources, getLabel, isComment } from "./annotationsModel";
 
