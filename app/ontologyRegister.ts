@@ -1,8 +1,6 @@
 import _ from "lodash";
 import axios from "axios";
 
-const solrUrl = "https://b2note.bsc.es/solr/b2note_index/select";
-
 export interface OntologyInfo {
   labels: string;
   descriptions: Array<string>;
@@ -22,7 +20,7 @@ function encodeSolrQuery(uri: string): string {
 
 // Getting ontologies {{{1
 
-function mkSolrQueryUrl(query: string): string {
+function mkSolrQueryUrl(solrUrl: string, query: string): string {
   const q = 
     (query.length <= 4 && _.words(query).length <= 1) ? `(labels:/${query}.*/)`
     : `(labels:"${query}"^100%20OR%20labels:${query}*^20%20OR%20text_auto:/${query}.*/^10%20OR%20labels:*${query}*)`;
@@ -48,15 +46,15 @@ function resultToDict(docs: any): OntologyDict {
   return groups;
 }
 
-export async function getOntologies(query: string): Promise<OntologyDict> {
-  const resp = await axios.get(mkSolrQueryUrl(query));
+export async function getOntologies(solrUrl: string, query: string): Promise<OntologyDict> {
+  const resp = await axios.get(mkSolrQueryUrl(solrUrl, query));
   const ontologies = resultToDict(resp.data?.response?.docs);
   return ontologies;
 }
 
 // Getting ontology info {{{1
 
-export function getInfo(ontologyUri: string): Promise<OntologyInfo> {
+export function getInfo(solrUrl: string, ontologyUri: string): Promise<OntologyInfo> {
   return new Promise((resolve, reject) => {
     const queryUrl = encodeSolrQuery(solrUrl + '?q=uris:("' + ontologyUri + '")&rows=100&wt=json');
     axios.get(queryUrl).then(
