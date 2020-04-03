@@ -20,6 +20,7 @@ export interface UserProfile {
   id: string;
   name: string;
   email: string;
+  orcid: string;
   organisation: string;
   jobTitle: string;
   country: string;
