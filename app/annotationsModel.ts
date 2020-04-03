@@ -87,11 +87,16 @@ export type AnBody = AnCompositeBody | AnTextualBody;
 
 export interface AnCreator {
   id: string;
+  orcid?: string;
   type: string;
 }
 
-export function mkCreator(id: string): AnCreator {
-  return { id, type: "Person" };
+export function mkCreator(id: string, orcid?: string): AnCreator {
+  return (
+    orcid ?
+      { id, orcid, type: "Person" }
+    : { id, type: "Person" }
+  );
 }
 
 export interface AnGenerator {
