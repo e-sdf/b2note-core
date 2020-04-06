@@ -105,11 +105,11 @@ export interface AnGenerator {
   name: string;
 }
 
-export function mkGenerator(): AnGenerator {
+export function mkGenerator(version: string): AnGenerator {
   return {
     type: "Software",
-    homepage: "https://b2note.bsc.es/b2note/",
-    name: "B2Note v3.0"
+    homepage: "https://b2note.bsc.es",
+    name: "B2NOTE " + version
   };
 }
 
