@@ -101,15 +101,17 @@ export function mkCreator(id: string, orcid?: string): AnCreator {
 
 export interface AnGenerator {
   type: string;
-  homepage: string;
   name: string;
+  version: string;
+  homepage: string;
 }
 
 export function mkGenerator(version: string): AnGenerator {
   return {
     type: "Software",
+    name: "B2NOTE",
+    version,
     homepage: "https://b2note.bsc.es",
-    name: "B2NOTE " + version
   };
 }
 

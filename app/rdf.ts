@@ -3,12 +3,12 @@ import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { v5 as uuidv5 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { AnRecord } from "./annotationsModel";
+import type { AnRecord, AnGenerator } from "./annotationsModel";
 import { AnRecordType, getAnType, getSources, getLabel, isComment } from "./annotationsModel";
 
 const NS="b9166f20-c23f-41ef-93ab-632aa4767ad2";
 
-function mkGenerator(): [string, Record<string, any>] {
+function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
   const uuid = uuidv5("generator", NS);
   return [uuid, {
     "@rdf:nodeID": uuid,
@@ -16,10 +16,10 @@ function mkGenerator(): [string, Record<string, any>] {
       "@rdf:resource": "http://www.w3.org/ns/activitystreams#Application"
     },
     "ns3:name": {
-      "#text": "B2Note v3.0",
+      "#text": gen.name + " " + gen.version,
     },
     "ns3:homepage": {
-      "@rdf:resource": "https://b2note.bsc.es"
+      "@rdf:resource": gen.homepage
     }
   }];
 }
@@ -154,7 +154,7 @@ function mkBody(an: AnRecord): [string, Record<string, any>, any[]] {
 }
 
 function mkDescItems(an: AnRecord): any[] {
-  const [generatorUUID, generator] = mkGenerator();
+  const [generatorUUID, generator] = mkGenerator(an.generator);
   const [creatorUUID, creator] = mkCreator(an.creator.id);
   const [bodyUUID, body, bodyItems] = mkBody(an);
   
@@ -194,7 +194,7 @@ function mkDescItems(an: AnRecord): any[] {
   ];
 }
 
-function anRecord2RdfObj(anl: AnRecord[]) {
+function anRecord2RdfObj(anl: AnRecord[]): Record<string, any> {
   return {
     "rdf:RDF": {
       "@xmlns:ns1": "http://www.w3.org/ns/oa#",
@@ -202,7 +202,7 @@ function anRecord2RdfObj(anl: AnRecord[]) {
       "@xmlns:ns3": "http://xmlns.com/foaf/0.1/",
       "@xmlns:ns4": "http://purl.org/dc/terms/",
       "@xmlns:rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-      "rdf:Description": anl.map(mkDescItems)
+      "rdf:Description": anl.map(an => mkDescItems(an))
     }
   };
 }
