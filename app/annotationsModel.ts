@@ -121,8 +121,8 @@ export interface AnTarget {
   type: string;
 }
 
-export function mkTarget(obj: {id: string; source: string}): AnTarget {
-  return { ...obj, type: AnBodyItemType.SPECIFIC_RESOURCE }; 
+export function mkTarget(target: Target): AnTarget {
+  return { id: target.pid, source: target.source, type: AnBodyItemType.SPECIFIC_RESOURCE }; 
 }
 
 export interface AnRecord {
