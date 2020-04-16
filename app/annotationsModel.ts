@@ -194,6 +194,8 @@ export interface GetQuery {
   value?: string;
   format?: Format;
   download?: boolean;
+  skip?: number;
+  limit?: number;
 }
 
 export interface TargetsQuery {
