@@ -9,8 +9,7 @@ import { AnRecordType, getAnType, getSources, getLabel, isComment } from "./anno
 
 function mkId(section?: string): string {
   const NS="b9166f20-c23f-41ef-93ab-632aa4767ad2";
-  const res = section ? uuidv5(section, NS).replace("-", "") : uuidv4().replace("-", "");
-  return res;
+  return "n" + (section ? uuidv5(section, NS).replace(/-/g, "") : uuidv4().replace(/-/g, ""));
 }
 
 function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
