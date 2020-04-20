@@ -6,10 +6,15 @@ import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { AnRecord, AnGenerator } from "./annotationsModel";
 import { AnRecordType, getAnType, getSources, getLabel, isComment } from "./annotationsModel";
 
-const NS="b9166f20-c23f-41ef-93ab-632aa4767ad2";
+
+function mkId(section?: string): string {
+  const NS="b9166f20-c23f-41ef-93ab-632aa4767ad2";
+  const res = section ? uuidv5(section, NS).replace("-", "") : uuidv4().replace("-", "");
+  return res;
+}
 
 function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
-  const uuid = uuidv5("generator", NS);
+  const uuid = mkId("generator");
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
@@ -25,7 +30,7 @@ function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
 }
 
 function mkCreator(id: string): [string, Record<string, any>] {
-  const uuid = uuidv5(id, NS);
+  const uuid = mkId(id);
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
@@ -48,7 +53,7 @@ function mkPidSource(pid: string, source: string): any {
 }
 
 function mkAnBodyItemSpecific(source: string): [string, Record<string, any>] {
-  const uuid = uuidv4();
+  const uuid = mkId();
   return [uuid, {
     "rdf:nodeID": uuid,
     "ns1:hasSource": {
@@ -61,7 +66,7 @@ function mkAnBodyItemSpecific(source: string): [string, Record<string, any>] {
 }
 
 function mkAnBodyItemTextual(value: string): [string, Record<string, any>] {
-  const uuid = uuidv4();
+  const uuid = mkId();
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:value": {
@@ -74,7 +79,7 @@ function mkAnBodyItemTextual(value: string): [string, Record<string, any>] {
 }
 
 function mkCompositeBody(sources: string[], value: string): [string, Record<string, any>, any[]] {
-  const uuid = uuidv5("composite body", NS);
+  const uuid = mkId("composite body");
   const specificItemsTps = sources.map(mkAnBodyItemSpecific);
   const specificItemsUUIDs = specificItemsTps.map(_.head);
   const specificItems = specificItemsTps.map(_.flow(_.tail, _.head));
@@ -97,7 +102,7 @@ function mkCompositeBody(sources: string[], value: string): [string, Record<stri
 }
 
 function mkKeywordAnBody(value: string): [string, Record<string, any>] {
-  const uuid = uuidv4();
+  const uuid = mkId();
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
@@ -113,7 +118,7 @@ function mkKeywordAnBody(value: string): [string, Record<string, any>] {
 }
 
 function mkCommentAnBody(value: string): [string, Record<string, any>] {
-  const uuid = uuidv4();
+  const uuid = mkId();
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
