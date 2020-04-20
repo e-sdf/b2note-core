@@ -85,20 +85,19 @@ export function mkTextualBody(value: string, purpose: PurposeType): AnTextualBod
 
 export type AnBody = AnCompositeBody | AnTextualBody;
 
-export interface AnCreator {
+export interface Creator {
   id: string;
   name?: string;
   orcid?: string;
+}
+
+export interface AnCreator extends Creator {
   type: string;
 }
 
-export function mkCreator(id: string, name?: string, orcid?: string): AnCreator {
-  const nameRec = name ? { name } : {};
-  const orcidRec = orcid ? { orcid } : {};
+export function mkCreator(creator: Creator): AnCreator {
   return {
-    id,
-    ...nameRec,
-    ...orcidRec,
+    ...creator,
     type: "Person"
   };
 }
