@@ -3,8 +3,8 @@ import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { v5 as uuidv5 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { AnRecord, AnGenerator } from "./annotationsModel";
-import { AnRecordType, getAnType, getSources, getLabel, isComment } from "./annotationsModel";
+import type { AnRecord, AnGenerator } from "../annotationsModel";
+import { AnRecordType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 
 
 function mkId(section?: string): string {

@@ -181,11 +181,12 @@ export enum AnRecordType {
   COMMENT = "comment"
 }
 
-export enum Format { JSONLD = "json-ld", RDF = "rdf-xml" }
+export enum Format { JSONLD = "json-ld", TTL = "rdf-ttl", RDF = "rdf-xml" }
 
 export function mkFileExt(format: Format): string {
   return matchSwitch(format, {
     [Format.JSONLD]: () => "jsonld",
+    [Format.TTL]: () => "ttl",
     [Format.RDF]: () => "rdf"
   });
 }
