@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { AnRecord, AnBody, AnGenerator } from "../annotationsModel";
+import type { AnRecord, AnGenerator, AnCreator } from "../annotationsModel";
 import { AnRecordType, getAnType, getSources, getLabel, isComment, mkTimestamp } from "../annotationsModel";
 
 export type Turtle = string;
@@ -51,11 +51,12 @@ function body2ttl(an: AnRecord): Turtle[] {
   ];
 }
 
-function mkCreator(an: AnRecord): Turtle[] {
+function mkCreator(creator: AnCreator): Array<Turtle|null> {
   return [
     `  dcterms:creator [`,
-    `    a foaf:${an.creator.type} ;`,
-    `    foaf:name "${an.creator.name}"`,
+    `    a foaf:Person ;`,
+    creator.name  ? `    foaf:name "${creator.name}" ;` : null,
+    creator.orcid ? `    orcid:${creator.orcid}` : null,
     `  ] ;`
   ];
 }
@@ -88,7 +89,7 @@ function an2ttl(an: AnRecord): Turtle[] {
     `  a oa:Annotation ;`,
     ...body2ttl(an),
     `  dcterms:created "${an.created}" ;`,
-    ...mkCreator(an),
+    ...(mkCreator(an.creator).filter(i => i !== null) as Turtle[]),
     `  dcterms:issued "${mkTimestamp()}" ;`,
     ...mkGenerator(an.generator),
     ...(isComment(an) ? mkCommenting() : mkTagging())
@@ -101,8 +102,10 @@ function mkPrefixes(): Turtle[] {
     `@prefix dcterms: <http://purl.org/dc/terms/> .`,
     `@prefix foaf: <http://xmlns.com/foaf/0.1/> .`,
     `@prefix oa: <http://www.w3.org/ns/oa#> .`,
+    `@prefix orcid: <@prefix orcid: <https://orcid.org/> .`,
     `@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .`,
-    `@prefix schema: <http://schema.org/> .`
+    `@prefix schema: <http://schema.org/> .`,
+    ``
   ];
 }
 
