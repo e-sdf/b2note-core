@@ -88,9 +88,9 @@ function an2ttl(an: AnRecord): Turtle[] {
     `<${an.id}>`,
     `  a oa:Annotation ;`,
     ...body2ttl(an),
-    `  dcterms:created "${an.created}" ;`,
+    `  dcterms:created "${an.created}"^^xsd:dateTime ;`,
     ...(mkCreator(an.creator).filter(i => i !== null) as Turtle[]),
-    `  dcterms:issued "${mkTimestamp()}" ;`,
+    `  dcterms:issued "${mkTimestamp()}"^^xsd:dateTime ;`,
     ...mkGenerator(an.generator),
     ...(isComment(an) ? mkCommenting() : mkTagging())
   ];
