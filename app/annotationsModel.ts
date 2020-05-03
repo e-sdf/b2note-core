@@ -87,6 +87,7 @@ export type AnBody = AnCompositeBody | AnTextualBody;
 
 export interface Creator {
   id: string;
+  email?: string;
   name?: string;
   orcid?: string;
 }
