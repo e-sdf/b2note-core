@@ -4,7 +4,7 @@ export function axiosErrToMsg(error: AxiosError): string {
   if (error.response) {
     // Request made and server responded
     console.error(error.response);
-    return error.response.data + " (" + error.response.status + ")";
+    return `${error.response.data.error} (${error.response.status}): ${error.response.data.message}`;
   } else if (error.request) {
     // The request was made but no response was received
     console.error(error.request);
