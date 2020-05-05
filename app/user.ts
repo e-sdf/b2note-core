@@ -1,9 +1,5 @@
 export const profileUrl = "/profile";
 
-export interface User {
-  id: string;
-}
-
 export enum Experience {
   NULL = "",
   BEGINNER = "beginner",
