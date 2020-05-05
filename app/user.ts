@@ -2,19 +2,19 @@ export const profileUrl = "/profile";
 
 export interface User {
   id: string;
-  accessToken: string;
 }
 
 export enum Experience {
+  NULL = "",
   BEGINNER = "beginner",
   INTERMEDIATE = "intermediate",
   ADVANCED = "advanced"
 }
 
 export interface UserProfile {
+  email: string;
   id: string;
   name: string;
-  email: string;
   orcid: string;
   organisation: string;
   jobTitle: string;
