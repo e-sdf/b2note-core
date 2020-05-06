@@ -32,7 +32,7 @@ function mkCreator(id: string): [string, Record<string, any>] {
     "@rdf:nodeID": uuid,
     "rdf:type": {
       "@rdf:resource": "http://xmlns.com/foaf/0.1/Person",
-      "@ns3:nick": id
+      "@ns3:openid": id
     }
   }];
 }

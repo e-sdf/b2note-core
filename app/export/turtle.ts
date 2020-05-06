@@ -55,7 +55,7 @@ function mkCreator(creator: AnCreator): Array<Turtle|null> {
   return [
     `  dcterms:creator [`,
     `    a foaf:Person ;`,
-    `    [ foaf:nick "${creator.id} ] ;`,
+    `    [ foaf:openid "${creator.id} ] ;`,
     creator.name  ? `    foaf:name "${creator.name}" ;` : null,
     creator.orcid ? `    orcid:${creator.orcid}` : null,
     `  ] ;`
