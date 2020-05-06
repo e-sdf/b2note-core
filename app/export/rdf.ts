@@ -1,19 +1,17 @@
 import _ from "lodash";
 import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
-import { v5 as uuidv5 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { AnRecord, AnGenerator } from "../annotationsModel";
 import { AnRecordType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 
 
-function mkId(section?: string): string {
-  const NS="b9166f20-c23f-41ef-93ab-632aa4767ad2";
-  return "n" + (section ? uuidv5(section, NS).replace(/-/g, "") : uuidv4().replace(/-/g, ""));
+function mkId(): string {
+  return "n" + uuidv4().replace(/-/g, "");
 }
 
 function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
-  const uuid = mkId("generator");
+  const uuid = mkId();
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
@@ -29,7 +27,7 @@ function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
 }
 
 function mkCreator(id: string): [string, Record<string, any>] {
-  const uuid = mkId(id);
+  const uuid = mkId();
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
@@ -78,7 +76,7 @@ function mkAnBodyItemTextual(value: string): [string, Record<string, any>] {
 }
 
 function mkCompositeBody(sources: string[], value: string): [string, Record<string, any>, any[]] {
-  const uuid = mkId("composite body");
+  const uuid = mkId();
   const specificItemsTps = sources.map(mkAnBodyItemSpecific);
   const specificItemsUUIDs = specificItemsTps.map(_.head);
   const specificItems = specificItemsTps.map(_.flow(_.tail, _.head));
