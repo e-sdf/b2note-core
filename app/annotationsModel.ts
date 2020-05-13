@@ -207,9 +207,7 @@ export interface TargetsQuery {
   tag: string;
 }
 
-export interface SearchQuery {
-  expression: string;
-}
+export type SearchQuery = string;
 
 // Querying {{{1
 
