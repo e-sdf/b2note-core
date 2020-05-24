@@ -1,4 +1,5 @@
 import type { AxiosError } from "axios";
+import type { ID, PID } from "./annotationsModel";
 
 export function axiosErrToMsg(error: AxiosError): string {
   if (error.response) {
@@ -14,4 +15,8 @@ export function axiosErrToMsg(error: AxiosError): string {
     console.error(error.message);
     return error.message;
   }
+}
+
+export function id2pid(id: ID, server: string): PID {
+  return server + "/" + id;
 }

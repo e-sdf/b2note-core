@@ -2,6 +2,7 @@ import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { AnRecord, AnGenerator, AnCreator } from "../annotationsModel";
 import { AnRecordType, getAnType, getSources, getLabel, isComment, mkTimestamp } from "../annotationsModel";
+import { id2pid } from "../utils";
 
 export type Turtle = string;
       
@@ -51,13 +52,11 @@ function body2ttl(an: AnRecord): Turtle[] {
   ];
 }
 
-function mkCreator(creator: AnCreator): Array<Turtle|null> {
+function mkCreator(creator: AnCreator, server: string): Array<Turtle|null> {
   return [
     `  dcterms:creator [`,
     `    a foaf:Person ;`,
-    `    [ foaf:openid "${creator.id} ] ;`,
-    creator.name  ? `    foaf:name "${creator.name}" ;` : null,
-    creator.orcid ? `    orcid:${creator.orcid}` : null,
+    `    [ foaf:homepage rdf:resource "${id2pid(creator.id, server)}" ] ;`,
     `  ] ;`
   ];
 }
@@ -84,13 +83,13 @@ function mkCommenting(): Turtle[] {
   ];
 }
 
-function an2ttl(an: AnRecord): Turtle[] {
+function an2ttl(an: AnRecord, server: string): Turtle[] {
   return [
     `<${an.id}>`,
     `  a oa:Annotation ;`,
     ...body2ttl(an),
     `  dcterms:created "${an.created}"^^xsd:dateTime ;`,
-    ...(mkCreator(an.creator).filter(i => i !== null) as Turtle[]),
+    ...(mkCreator(an.creator, server).filter(i => i !== null) as Turtle[]),
     `  dcterms:issued "${mkTimestamp()}"^^xsd:dateTime ;`,
     ...mkGenerator(an.generator),
     ...(isComment(an) ? mkCommenting() : mkTagging())
@@ -110,10 +109,10 @@ function mkPrefixes(): Turtle[] {
   ];
 }
 
-export function anRecords2ttl(anl: AnRecord[]): Turtle {
+export function anRecords2ttl(anl: AnRecord[], server: string): Turtle {
   const ttl = [
     ...mkPrefixes(),
-    ...anl.reduce((res: Turtle[], an: AnRecord) => [...res, ...an2ttl(an)], [])
+    ...anl.reduce((res: Turtle[], an: AnRecord) => [...res, ...an2ttl(an, server)], [])
   ];
   //console.log(ttl);
   return _.join(ttl, "\n");

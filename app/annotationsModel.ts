@@ -5,8 +5,16 @@ export const annotationsUrl = "/annotations";
 export const targetsUrl = "/targets";
 export const resolveSourceUrl = "/resolve-source";
 
+export type ID = string;
+export type CreatorID = ID;
+export type AnID = ID;
+
+export type PID = string;
+export type CreatorPID = PID;
+export type AnPID = PID;
+
 export interface Target {
-  pid: string;
+  pid: PID;
   source: string;
 }
 
@@ -86,10 +94,7 @@ export function mkTextualBody(value: string, purpose: PurposeType): AnTextualBod
 export type AnBody = AnCompositeBody | AnTextualBody;
 
 export interface Creator {
-  id: string;
-  email?: string;
-  name?: string;
-  orcid?: string;
+  id: ID;
 }
 
 export interface AnCreator extends Creator {
@@ -120,7 +125,7 @@ export function mkGenerator(version: string): AnGenerator {
 }
 
 export interface AnTarget {
-  id: string;
+  id: ID;
   source: string;
   type: string;
 }
@@ -136,7 +141,7 @@ export interface AnRecord {
   creator: AnCreator;
   generated: string;
   generator: AnGenerator;
-  id: string;
+  id: ID;
   motivation: PurposeType;
   target: AnTarget;
   type: string;

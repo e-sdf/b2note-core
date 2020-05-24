@@ -2,7 +2,7 @@ import _ from "lodash";
 import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { AnRecord, AnGenerator } from "../annotationsModel";
+import type { PID, AnRecord, AnGenerator } from "../annotationsModel";
 import { AnRecordType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 
 
@@ -26,13 +26,13 @@ function mkGenerator(gen: AnGenerator): [string, Record<string, any>] {
   }];
 }
 
-function mkCreator(id: string): [string, Record<string, any>] {
+function mkCreator(pid: PID): [string, Record<string, any>] {
   const uuid = mkId();
   return [uuid, {
     "@rdf:nodeID": uuid,
     "rdf:type": {
       "@rdf:resource": "http://xmlns.com/foaf/0.1/Person",
-      "@ns3:openid": id
+      "@ns3:openid": pid
     }
   }];
 }
