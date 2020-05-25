@@ -3,8 +3,8 @@ import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { PID, AnRecord, AnGenerator } from "../annotationsModel";
-import { AnRecordType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
-
+import { annotationsUrl, AnRecordType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
+import { usersUrl } from "../user";
 
 function mkId(): string {
   return "n" + uuidv4().replace(/-/g, "");
@@ -155,14 +155,14 @@ function mkBody(an: AnRecord): [string, Record<string, any>, any[]] {
   });
 }
 
-function mkDescItems(an: AnRecord): any[] {
+function mkDescItems(an: AnRecord, serverUrl: string): any[] {
   const [generatorUUID, generator] = mkGenerator(an.generator);
-  const [creatorUUID, creator] = mkCreator(an.creator.id);
+  const [creatorUUID, creator] = mkCreator(serverUrl + usersUrl + "/" + an.creator.id);
   const [bodyUUID, body, bodyItems] = mkBody(an);
   
   return [
     {
-      "@rdf:about": an.id,
+      "@rdf:about": serverUrl + annotationsUrl + "/" + an.id,
       ...(isComment(an) ? mkCommenting() : mkTagging()),
       "ns2:generator": {
         "@rdf:nodeID": generatorUUID
@@ -196,7 +196,7 @@ function mkDescItems(an: AnRecord): any[] {
   ];
 }
 
-function anRecord2RdfObj(anl: AnRecord[]): Record<string, any> {
+function anRecord2RdfObj(anl: AnRecord[], serverUrl: string): Record<string, any> {
   return {
     "rdf:RDF": {
       "@xmlns:ns1": "http://www.w3.org/ns/oa#",
@@ -204,13 +204,13 @@ function anRecord2RdfObj(anl: AnRecord[]): Record<string, any> {
       "@xmlns:ns3": "http://xmlns.com/foaf/0.1/",
       "@xmlns:ns4": "http://purl.org/dc/terms/",
       "@xmlns:rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-      "rdf:Description": anl.map(an => mkDescItems(an))
+      "rdf:Description": anl.map(an => mkDescItems(an, serverUrl))
     }
   };
 }
 
-export function mkRDF(anRecords: AnRecord[]): string {
-  const doc = anRecord2RdfObj(anRecords);
+export function mkRDF(anRecords: AnRecord[], serverUrl: string): string {
+  const doc = anRecord2RdfObj(anRecords, serverUrl);
   const res = xml.create(doc).end({ pretty: true });
   // console.log(res);
   return res;

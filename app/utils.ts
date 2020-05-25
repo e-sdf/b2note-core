@@ -16,7 +16,3 @@ export function axiosErrToMsg(error: AxiosError): string {
     return error.message;
   }
 }
-
-export function id2pid(id: ID, server: string): PID {
-  return server + "/" + id;
-}
