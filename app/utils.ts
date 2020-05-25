@@ -16,3 +16,7 @@ export function axiosErrToMsg(error: AxiosError): string {
     return error.message;
   }
 }
+
+export function extractId(pid: PID): ID {
+  return pid.substr(pid.lastIndexOf("/") + 1);
+}
