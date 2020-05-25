@@ -1,4 +1,4 @@
-export const profileUrl = "/profile";
+export const usersUrl = "/users";
 
 export enum Experience {
   NULL = "",
