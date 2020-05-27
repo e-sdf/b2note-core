@@ -11,6 +11,8 @@ export interface UserProfile {
   id: string;
   email: string;
   name: string;
+  givenName: string;
+  familyName: string;
   orcid: string;
   organisation: string;
   jobTitle: string;
