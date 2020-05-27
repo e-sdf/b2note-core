@@ -1,4 +1,6 @@
 import { matchSwitch } from '@babakness/exhaustive-type-checking';
+import * as utils from "./utils";
+
 // Annotating {{{1
 
 export const annotationsUrl = "/annotations";
@@ -179,6 +181,14 @@ export function mkAnRecord(body: AnBody, target: AnTarget, creator: AnCreator, g
     motivation,
     type: "Annotation"
   };
+}
+
+export function getAnId(an: AnRecord): ID {
+  return utils.extractId(an.id);
+}
+
+export function getCreatorId(an: AnRecord): ID {
+  return utils.extractId(an.creator.id);
 }
 
 export enum AnRecordType {
