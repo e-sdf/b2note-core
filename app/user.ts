@@ -10,7 +10,7 @@ export enum Experience {
 export interface UserProfile {
   id: string;
   email: string;
-  name: string;
+  personName: string;
   givenName: string;
   familyName: string;
   orcid: string;
