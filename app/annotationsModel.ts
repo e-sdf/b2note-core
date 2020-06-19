@@ -1,3 +1,5 @@
+// Annotations model according to <https://www.w3.org/TR/annotation-model>
+
 import { matchSwitch } from '@babakness/exhaustive-type-checking';
 import * as utils from "./utils";
 
@@ -136,7 +138,7 @@ export function mkTarget(target: Target): AnTarget {
   return { id: target.pid, source: target.source, type: AnBodyItemType.SPECIFIC_RESOURCE }; 
 }
 
-export interface AnRecord {
+export interface Annotation {
   "@context": string;
   body: AnBody;
   created: string;
@@ -167,7 +169,7 @@ export function mkTimestamp(): string {
   return (new Date()).toISOString();
 }
 
-export function mkAnRecord(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType): AnRecord {
+export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType): Annotation {
   const ts = mkTimestamp();
   return {
     "@context": "http://www.w3.org/ns/anno/jsonld",
@@ -183,15 +185,15 @@ export function mkAnRecord(body: AnBody, target: AnTarget, creator: AnCreator, g
   };
 }
 
-export function getAnId(an: AnRecord): ID {
+export function getAnId(an: Annotation): ID {
   return utils.extractId(an.id);
 }
 
-export function getCreatorId(an: AnRecord): ID {
+export function getCreatorId(an: Annotation): ID {
   return utils.extractId(an.creator.id);
 }
 
-export enum AnRecordType {
+export enum AnnotationType {
   SEMANTIC = "semantic",
   KEYWORD = "keyword",
   COMMENT = "comment"
@@ -208,7 +210,7 @@ export function mkFileExt(format: Format): string {
 }
 
 export interface GetQuery {
-  type?: Array<AnRecordType>;
+  type?: Array<AnnotationType>;
   creator?: string;
   "target-source"?: string;
   value?: string;
@@ -226,29 +228,29 @@ export type SearchQuery = string;
 
 // Querying {{{1
 
-export function isSemantic(anRecord: AnRecord): boolean {
-  return anRecord.body.type === AnBodyItemType.COMPOSITE;
+export function isSemantic(annotation: Annotation): boolean {
+  return annotation.body.type === AnBodyItemType.COMPOSITE;
 }
 
-export function isKeyword(anRecord: AnRecord): boolean {
-  return anRecord.motivation === PurposeType.TAGGING && anRecord.body.type === AnBodyItemType.TEXTUAL_BODY;
+export function isKeyword(annotation: Annotation): boolean {
+  return annotation.motivation === PurposeType.TAGGING && annotation.body.type === AnBodyItemType.TEXTUAL_BODY;
 }
 
-export function isComment(anRecord: AnRecord): boolean {
-  return anRecord.motivation === PurposeType.COMMENTING && anRecord.body.type === AnBodyItemType.TEXTUAL_BODY;
+export function isComment(annotation: Annotation): boolean {
+  return annotation.motivation === PurposeType.COMMENTING && annotation.body.type === AnBodyItemType.TEXTUAL_BODY;
 }
 
-export function getAnType(anRecord: AnRecord): AnRecordType {
+export function getAnType(annotation: Annotation): AnnotationType {
   return (
-      isSemantic(anRecord) ? AnRecordType.SEMANTIC 
-    : isKeyword(anRecord) ? AnRecordType.KEYWORD
-    : AnRecordType.COMMENT
+      isSemantic(annotation) ? AnnotationType.SEMANTIC 
+    : isKeyword(annotation) ? AnnotationType.KEYWORD
+    : AnnotationType.COMMENT
   );
 }
 
-export function getLabel(anRecord: AnRecord): string {
-  if (isSemantic(anRecord)) {
-    const anBody = anRecord.body as AnCompositeBody;
+export function getLabel(annotation: Annotation): string {
+  if (isSemantic(annotation)) {
+    const anBody = annotation.body as AnCompositeBody;
     const item = anBody.items.filter((i: AnBodyItem) => i.type === AnBodyItemType.TEXTUAL_BODY )[0];
     if (!item) {
       throw new Error("TextualBody record not found in body item");
@@ -261,14 +263,14 @@ export function getLabel(anRecord: AnRecord): string {
       }
     }
   } else {
-    const anBody = anRecord.body as AnTextualBody;
+    const anBody = annotation.body as AnTextualBody;
     return anBody.value;
   }
 }
 
-export function getSources(anRecord: AnRecord): Array<string> {
-  if (isSemantic(anRecord)) {
-    const anBody = anRecord.body as AnCompositeBody;
+export function getSources(annotation: Annotation): Array<string> {
+  if (isSemantic(annotation)) {
+    const anBody = annotation.body as AnCompositeBody;
     const specificItems = anBody.items.filter((i: AnBodyItem) => i.type === AnBodyItemType.SPECIFIC_RESOURCE) as Array<AnBodyItemSpecific>;
     return specificItems.map(i => i.source);
   } else {

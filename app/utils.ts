@@ -1,5 +1,5 @@
-import type { AxiosError } from "axios";
-import type { ID, PID } from "./annotationsModel";
+import { AxiosError } from "axios";
+import { ID, PID } from "./annotationsModel";
 
 export function axiosErrToMsg(error: AxiosError): string {
   if (error.response) {

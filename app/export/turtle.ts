@@ -1,13 +1,13 @@
 import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { AnRecord, AnGenerator, AnCreator } from "../annotationsModel";
-import { annotationsUrl, AnRecordType, getAnType, getSources, getLabel, isComment, mkTimestamp } from "../annotationsModel";
+import type { Annotation, AnGenerator, AnCreator } from "../annotationsModel";
+import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment, mkTimestamp } from "../annotationsModel";
 import { usersUrl } from "../user";
 
 export type Turtle = string;
       
 
-function body2ttl(an: AnRecord): Turtle[] {
+function body2ttl(an: Annotation): Turtle[] {
 
   function mkCompositeBody(sources: string[], value: string): Turtle[] {
     return [
@@ -39,9 +39,9 @@ function body2ttl(an: AnRecord): Turtle[] {
   function mkBody(): Turtle[] {
     const value = getLabel(an);
     return matchSwitch(getAnType(an), {
-      [AnRecordType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
-      [AnRecordType.KEYWORD]: () => mkKeywordAnBody(value),
-      [AnRecordType.COMMENT]: () => mkCommentAnBody(value),
+      [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
+      [AnnotationType.KEYWORD]: () => mkKeywordAnBody(value),
+      [AnnotationType.COMMENT]: () => mkCommentAnBody(value),
     });
   }
 
@@ -83,7 +83,7 @@ function mkCommenting(): Turtle[] {
   ];
 }
 
-function an2ttl(an: AnRecord, serverUrl: string): Turtle[] {
+function an2ttl(an: Annotation, serverUrl: string): Turtle[] {
   return [
     `<${serverUrl + annotationsUrl + "/" + an.id}>`,
     `  a oa:Annotation ;`,
@@ -109,10 +109,10 @@ function mkPrefixes(): Turtle[] {
   ];
 }
 
-export function anRecords2ttl(anl: AnRecord[], serverUrl: string): Turtle {
+export function annotations2ttl(anl: Annotation[], serverUrl: string): Turtle {
   const ttl = [
     ...mkPrefixes(),
-    ...anl.reduce((res: Turtle[], an: AnRecord) => [...res, ...an2ttl(an, serverUrl)], [])
+    ...anl.reduce((res: Turtle[], an: Annotation) => [...res, ...an2ttl(an, serverUrl)], [])
   ];
   //console.log(ttl);
   return _.join(ttl, "\n");

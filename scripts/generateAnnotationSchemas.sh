@@ -4,16 +4,16 @@ D="app"
 AF="$D/annotationsModel.ts"
 O="--topRef --noExtraProps"
 
-S="anRecord.schema.js"
+S="annotation.schema.js"
 F="$D/$S"
-echo "export const anRecordSchema = " > $F
-typescript-json-schema --id "anRecord" $O --required $AF AnRecord >> $F
+echo "export const annotationSchema = " > $F
+typescript-json-schema --id "annotation" $O --required $AF Annotation >> $F
 
 # Schema with optional fields for patch validations
-S="anRecord.opt.schema.js"
+S="annotation.opt.schema.js"
 F="$D/$S"
-echo "export const anRecordOptSchema = " > $F
-typescript-json-schema --id "anRecordOpt" $O $AF AnRecord >> $F
+echo "export const annotationOptSchema = " > $F
+typescript-json-schema --id "annotationOpt" $O $AF Annotation >> $F
 
 S="getQuery.schema.js"
 F=$D/$S

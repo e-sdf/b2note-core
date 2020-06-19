@@ -2,8 +2,8 @@ import _ from "lodash";
 import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { PID, AnRecord, AnGenerator } from "../annotationsModel";
-import { annotationsUrl, AnRecordType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
+import type { PID, Annotation, AnGenerator } from "../annotationsModel";
+import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 import { usersUrl } from "../user";
 
 function mkId(): string {
@@ -146,16 +146,16 @@ function mkCommenting(): Record<string, any> {
   };
 }
 
-function mkBody(an: AnRecord): [string, Record<string, any>, any[]] {
+function mkBody(an: Annotation): [string, Record<string, any>, any[]] {
   const value = getLabel(an);
   return matchSwitch(getAnType(an), {
-    [AnRecordType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
-    [AnRecordType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
-    [AnRecordType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]]
+    [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
+    [AnnotationType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
+    [AnnotationType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]]
   });
 }
 
-function mkDescItems(an: AnRecord, serverUrl: string): any[] {
+function mkDescItems(an: Annotation, serverUrl: string): any[] {
   const [generatorUUID, generator] = mkGenerator(an.generator);
   const [creatorUUID, creator] = mkCreator(serverUrl + usersUrl + "/" + an.creator.id);
   const [bodyUUID, body, bodyItems] = mkBody(an);
@@ -196,7 +196,7 @@ function mkDescItems(an: AnRecord, serverUrl: string): any[] {
   ];
 }
 
-function anRecord2RdfObj(anl: AnRecord[], serverUrl: string): Record<string, any> {
+function annotation2RdfObj(anl: Annotation[], serverUrl: string): Record<string, any> {
   return {
     "rdf:RDF": {
       "@xmlns:ns1": "http://www.w3.org/ns/oa#",
@@ -209,8 +209,8 @@ function anRecord2RdfObj(anl: AnRecord[], serverUrl: string): Record<string, any
   };
 }
 
-export function mkRDF(anRecords: AnRecord[], serverUrl: string): string {
-  const doc = anRecord2RdfObj(anRecords, serverUrl);
+export function mkRDF(annotations: Annotation[], serverUrl: string): string {
+  const doc = annotation2RdfObj(annotations, serverUrl);
   const res = xml.create(doc).end({ pretty: true });
   // console.log(res);
   return res;
