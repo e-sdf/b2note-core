@@ -176,7 +176,7 @@ export function mkTimestamp(): string {
   return (new Date()).toISOString();
 }
 
-export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType): Annotation {
+export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType, visibility: VisibilityEnum): Annotation {
   const ts = mkTimestamp();
   return {
     "@context": "http://www.w3.org/ns/anno/jsonld",
@@ -188,7 +188,8 @@ export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator,
     generator,
     id: "",
     motivation,
-    type: "Annotation"
+    type: "Annotation",
+    visibility
   };
 }
 
