@@ -138,6 +138,12 @@ export function mkTarget(target: Target): AnTarget {
   return { id: target.pid, source: target.source, type: AnBodyItemType.SPECIFIC_RESOURCE }; 
 }
 
+// Web Annotation Model B2NOTE extension
+export enum VisibilityEnum {
+  PRIVATE = "private",
+  PUBLIC = "public"
+}
+
 export interface Annotation {
   "@context": string;
   body: AnBody;
@@ -149,6 +155,7 @@ export interface Annotation {
   motivation: PurposeType;
   target: AnTarget;
   type: string;
+  visibility?: VisibilityEnum; // Web Annotation Model B2NOTE extension
 }
 
 export function mkSemanticAnBody(sources: Array<string>, value: string): AnCompositeBody {
@@ -277,6 +284,4 @@ export function getSources(annotation: Annotation): Array<string> {
     return [];
   }
 }
-
-
 
