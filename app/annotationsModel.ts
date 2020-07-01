@@ -276,6 +276,18 @@ export function getLabel(annotation: Annotation): string {
   }
 }
 
+export function isEqual(an1: Annotation, an2: Annotation): boolean {
+  return (
+    getAnType(an1) === getAnType(an2) &&
+    getLabel(an1) === getLabel(an2) && 
+    an1.creator.id === an2.creator.id
+  );
+}
+
+export function isMine(annotation: Annotation, userPID: PID): boolean {
+  return annotation.creator.id === userPID;
+}
+
 export function getSources(annotation: Annotation): Array<string> {
   if (isSemantic(annotation)) {
     const anBody = annotation.body as AnCompositeBody;
