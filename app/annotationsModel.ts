@@ -284,8 +284,8 @@ export function isEqual(an1: Annotation, an2: Annotation): boolean {
   );
 }
 
-export function isMine(annotation: Annotation, userPID: PID): boolean {
-  return annotation.creator.id === userPID;
+export function isMine(annotation: Annotation, userPID: PID|null): boolean {
+  return userPID !== null && (annotation.creator.id === userPID);
 }
 
 export function getSources(annotation: Annotation): Array<string> {
