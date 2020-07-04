@@ -155,7 +155,7 @@ export interface Annotation {
   motivation: PurposeType;
   target: AnTarget;
   type: string;
-  visibility?: VisibilityEnum; // Web Annotation Model B2NOTE extension
+  visibility: VisibilityEnum; // Web Annotation Model B2NOTE extension
 }
 
 export function mkSemanticAnBody(sources: Array<string>, value: string): AnCompositeBody {
