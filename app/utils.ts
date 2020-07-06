@@ -8,8 +8,9 @@ export function axiosErrToMsg(error: AxiosError): string {
     return `${error.response.data.error} (${error.response.status}): ${error.response.data.message}`;
   } else if (error.request) {
     // The request was made but no response was received
+    console.error("Server not responding to request:");
     console.error(error.request);
-    return error.request;
+    return "Server not responding";
   } else {
     // Something happened in setting up the request that triggered an Error
     console.error(error.message);
