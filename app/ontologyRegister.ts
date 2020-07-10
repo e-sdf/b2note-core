@@ -1,5 +1,6 @@
 import _ from "lodash";
 import axios from "axios";
+import { axiosErrToMsg } from "./utils";
 
 export interface OntologyInfo {
   labels: string;
@@ -21,7 +22,7 @@ function encodeSolrQuery(uri: string): string {
 // Getting ontologies {{{1
 
 function mkSolrQueryUrl(solrUrl: string, query: string): string {
-  const q = 
+  const q =
     (query.length <= 4 && _.words(query).length <= 1) ? `(labels:/${query}.*/)`
     : `(labels:"${query}"^100%20OR%20labels:${query}*^20%20OR%20text_auto:/${query}.*/^10%20OR%20labels:*${query}*)`;
   const notErrors = "%20AND%20NOT%20(labels:/Error[0-9].*/)";
@@ -47,9 +48,12 @@ function resultToDict(docs: any): OntologyDict {
 }
 
 export async function getOntologies(solrUrl: string, query: string): Promise<OntologyDict> {
-  const resp = await axios.get(mkSolrQueryUrl(solrUrl, query));
-  const ontologies = resultToDict(resp.data?.response?.docs);
-  return ontologies;
+  return new Promise((resolve, reject) => {
+    axios.get(mkSolrQueryUrl(solrUrl, query)).then(
+      resp => resolve(resultToDict(resp.data?.response?.docs)),
+      err => reject(axiosErrToMsg(err))
+    ).catch(err => reject(axiosErrToMsg(err)));
+  });
 }
 
 // Getting ontology info {{{1
@@ -67,7 +71,7 @@ export function getInfo(solrUrl: string, ontologyUri: string): Promise<OntologyI
           reject("SOLR query returned 0 results for " + queryUrl);
         }
       },
-      error => reject(error)
-    ).catch(error => reject(error));
+      error => reject(axiosErrToMsg(error))
+    ).catch(error => reject(axiosErrToMsg(error)));
   });
 }
