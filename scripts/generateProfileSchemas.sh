@@ -1,6 +1,6 @@
 #!/bin/bash
 
-D="app"
+D="src/core"
 PF="$D/user.ts"
 O="--topRef --noExtraProps"
 

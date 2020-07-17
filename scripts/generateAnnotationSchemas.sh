@@ -1,6 +1,6 @@
 #!/bin/bash
 
-D="app"
+D="src/core"
 AF="$D/annotationsModel.ts"
 O="--topRef --noExtraProps"
 

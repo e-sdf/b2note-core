@@ -1,6 +1,6 @@
 #!/bin/bash
 
-D="app"
+D="src/core"
 HF="$D/handleModel.ts"
 O="--topRef"
 
