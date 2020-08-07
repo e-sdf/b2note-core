@@ -17,11 +17,6 @@ export type PID = string;
 export type CreatorPID = PID;
 export type AnPID = PID;
 
-export interface Target {
-  pid: PID;
-  source: string;
-}
-
 export enum AnBodyItemType {
   COMPOSITE = "Composite",
   SPECIFIC_RESOURCE = "SpecificResource",
@@ -130,12 +125,8 @@ export function mkGenerator(version: string): AnGenerator {
 
 export interface AnTarget {
   id: ID;
-  source: string;
+  source?: string;
   type: string;
-}
-
-export function mkTarget(target: Target): AnTarget {
-  return { id: target.pid, source: target.source, type: AnBodyItemType.SPECIFIC_RESOURCE }; 
 }
 
 // Web Annotation Model B2NOTE extension
@@ -250,7 +241,7 @@ export function isComment(annotation: Annotation): boolean {
 
 export function getAnType(annotation: Annotation): AnnotationType {
   return (
-      isSemantic(annotation) ? AnnotationType.SEMANTIC 
+      isSemantic(annotation) ? AnnotationType.SEMANTIC
     : isKeyword(annotation) ? AnnotationType.KEYWORD
     : AnnotationType.COMMENT
   );
@@ -279,7 +270,7 @@ export function getLabel(annotation: Annotation): string {
 export function isEqual(an1: Annotation, an2: Annotation): boolean {
   return (
     getAnType(an1) === getAnType(an2) &&
-    getLabel(an1) === getLabel(an2) && 
+    getLabel(an1) === getLabel(an2) &&
     an1.creator.id === an2.creator.id
   );
 }
@@ -297,4 +288,3 @@ export function getSources(annotation: Annotation): Array<string> {
     return [];
   }
 }
-

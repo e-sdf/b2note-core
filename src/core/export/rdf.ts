@@ -159,7 +159,7 @@ function mkDescItems(an: Annotation, serverUrl: string): any[] {
   const [generatorUUID, generator] = mkGenerator(an.generator);
   const [creatorUUID, creator] = mkCreator(serverUrl + usersUrl + "/" + an.creator.id);
   const [bodyUUID, body, bodyItems] = mkBody(an);
-  
+
   return [
     {
       "@rdf:about": serverUrl + annotationsUrl + "/" + an.id,
@@ -190,7 +190,8 @@ function mkDescItems(an: Annotation, serverUrl: string): any[] {
     },
     generator,
     creator,
-    mkPidSource(an.target.id, an.target.source),
+    //TODO: accomodate to new structure
+    //mkPidSource(an.target.id, an.target.source),
     body,
     bodyItems
   ];
