@@ -14,13 +14,3 @@ S="annotation.opt.schema.js"
 F="$D/$S"
 echo "export const annotationOptSchema = " > $F
 typescript-json-schema --id "annotationOpt" $O $AF Annotation >> $F
-
-S="getQuery.schema.js"
-F=$D/$S
-echo "export const getQuerySchema = " > $F
-typescript-json-schema --id "getQuery" $O --required $AF GetQuery >> $F
-
-S="targetsQuery.schema.js"
-F=$D/$S
-echo "export const targetsQuerySchema = " > $F
-typescript-json-schema --id "targetsQuery" $O --required $AF TargetsQuery >> $F

@@ -233,23 +233,6 @@ export function mkFileExt(format: Format): string {
   });
 }
 
-export interface GetQuery {
-  type?: Array<AnnotationType>;
-  creator?: string;
-  "target-source"?: string;
-  value?: string;
-  format?: Format;
-  download?: boolean;
-  skip?: number;
-  limit?: number;
-}
-
-export interface TargetsQuery {
-  tag: string;
-}
-
-export type SearchQuery = string;
-
 // Querying {{{1
 
 export function isSemantic(annotation: Annotation): boolean {
