@@ -123,9 +123,34 @@ export function mkGenerator(version: string): AnGenerator {
   };
 }
 
+export interface TextPositionSelector {
+  type: "TextPositionSelector";
+  start: number;
+  end: number;
+}
+
+export interface XPathSelector {
+  type: "XPathSelector";
+  value: string;
+  refinedBy?: TextPositionSelector;
+}
+
+export function mkTargetSelector(xpath: string, startOffset: number, endOffset: number): XPathSelector {
+  return {
+    type: "XPathSelector",
+    value: xpath,
+    refinedBy: {
+      type: "TextPositionSelector",
+      start: startOffset,
+      end: endOffset
+    }
+  };
+}
+
 export interface AnTarget {
   id: ID;
   source?: string;
+  selector?: XPathSelector;
   type: string;
 }
 
