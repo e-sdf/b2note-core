@@ -21,3 +21,11 @@ export function axiosErrToMsg(error: AxiosError): string {
 export function extractId(pid: PID): ID {
   return pid.substr(pid.lastIndexOf("/") + 1);
 }
+
+export function normaliseUrl(url: string|null): string|null {
+  return (
+    url ?
+      url[url.length - 1] === "#" ? url.substring(0, url.length - 1) : url
+    : null
+  );
+}
