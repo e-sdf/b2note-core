@@ -1,4 +1,4 @@
-import type { AnCreator, AnGenerator } from "./annotationsModel";
+import { AnCreator, AnGenerator } from "./annotationsModel";
 import { mkTimestamp, mkGenerator } from "./annotationsModel";
 
 export enum TermTypes {
