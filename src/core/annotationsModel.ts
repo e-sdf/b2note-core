@@ -1,6 +1,5 @@
 // Annotations model according to <https://www.w3.org/TR/annotation-model>
 
-import { matchSwitch } from '@babakness/exhaustive-type-checking';
 import * as utils from "./utils";
 
 // Annotating {{{1
@@ -221,16 +220,6 @@ export enum AnnotationType {
   SEMANTIC = "semantic",
   KEYWORD = "keyword",
   COMMENT = "comment"
-}
-
-export enum Format { JSONLD = "json-ld", TTL = "rdf-ttl", RDF = "rdf-xml" }
-
-export function mkFileExt(format: Format): string {
-  return matchSwitch(format, {
-    [Format.JSONLD]: () => "jsonld",
-    [Format.TTL]: () => "ttl",
-    [Format.RDF]: () => "rdf"
-  });
 }
 
 // Querying {{{1
