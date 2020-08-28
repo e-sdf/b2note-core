@@ -187,12 +187,8 @@ export function mkCommentAnBody(value: string): AnTextualBody {
   return mkTextualBody(value, PurposeType.COMMENTING);
 }
 
-export function mkTimestamp(): string {
-  return (new Date()).toISOString();
-}
-
 export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType, visibility: VisibilityEnum): Annotation {
-  const ts = mkTimestamp();
+  const ts = utils.mkTimestamp();
   return {
     "@context": "http://www.w3.org/ns/anno/jsonld",
     body,

@@ -1,6 +1,10 @@
 import { AxiosError } from "axios";
 import { ID, PID } from "./annotationsModel";
 
+export function mkTimestamp(): string {
+  return (new Date()).toISOString();
+}
+
 export function axiosErrToMsg(error: AxiosError): string {
   if (error.response) {
     // Request made and server responded

@@ -1,7 +1,7 @@
 import * as an from "./annotationsModel";
 import * as formats from "./formats";
 
-export interface GetQuery {
+export interface GetAnQuery {
   type?: Array<an.AnnotationType>;
   creator?: string;
   "target-id"?: string;
@@ -13,7 +13,7 @@ export interface GetQuery {
   limit?: number;
 }
 
-export interface TargetsQuery {
+export interface AnTargetsQuery {
   tag: string;
 }
 

@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { AnCreator, AnGenerator } from "./annotationsModel";
-import { mkTimestamp, mkGenerator } from "./annotationsModel";
+import { mkGenerator } from "./annotationsModel";
+import * as utils from "./utils";
 
 export const nanopubsUrl = "/nanopubs";
 
@@ -65,7 +66,7 @@ export interface PublicationInfo {
 }
 
 export function mkPublicationInfo(version: string): PublicationInfo {
-  const ts = mkTimestamp();
+  const ts = utils.mkTimestamp();
   return {
     created: ts,
     generator: mkGenerator(version)

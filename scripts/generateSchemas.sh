@@ -4,4 +4,5 @@
 ./scripts/generateNanopubSchemas.sh
 ./scripts/generateHandleSchemas.sh
 ./scripts/generateProfileSchemas.sh
-./scripts/generateQuerySchemas.sh
+./scripts/generateAnQuerySchemas.sh
+./scripts/generateNpQuerySchemas.sh

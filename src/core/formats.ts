@@ -1,5 +1,5 @@
 import { matchSwitch } from '@babakness/exhaustive-type-checking';
-import type { Response } from "express";
+import { Response } from "express";
 
 export enum FormatType { JSONLD = "json-ld", TTL = "rdf-ttl", RDF = "rdf-xml" }
 

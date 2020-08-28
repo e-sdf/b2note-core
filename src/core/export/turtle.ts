@@ -1,11 +1,12 @@
 import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { Annotation, AnGenerator, AnCreator } from "../annotationsModel";
-import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment, mkTimestamp } from "../annotationsModel";
+import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 import { usersUrl } from "../user";
+import { mkTimestamp } from "../utils";
 
 export type Turtle = string;
-      
+
 
 function body2ttl(an: Annotation): Turtle[] {
 
@@ -66,8 +67,8 @@ function mkGenerator(gen: AnGenerator): Turtle[] {
     `  as:generator [`,
     `    a as:Application ;`,
     `    schema:softwareVersion "${gen.version}" ;`,
-    `    foaf:homepage <${gen.homepage}>`, 
-    `  ] ;`  
+    `    foaf:homepage <${gen.homepage}>`,
+    `  ] ;`
   ];
 }
 
