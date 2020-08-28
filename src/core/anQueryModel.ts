@@ -1,4 +1,5 @@
 import * as an from "./annotationsModel";
+import * as formats from "./formats";
 
 export interface GetQuery {
   type?: Array<an.AnnotationType>;
@@ -6,7 +7,7 @@ export interface GetQuery {
   "target-id"?: string;
   "target-source"?: string;
   value?: string;
-  format?: an.Format;
+  format?: formats.FormatType;
   download?: boolean;
   skip?: number;
   limit?: number;
