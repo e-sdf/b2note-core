@@ -1,5 +1,8 @@
+import _ from "lodash";
 import { AnCreator, AnGenerator } from "./annotationsModel";
 import { mkTimestamp, mkGenerator } from "./annotationsModel";
+
+export const nanopubsUrl = "/nanopubs";
 
 export enum TermTypes {
   KEYWORD = "keyword",
@@ -85,4 +88,8 @@ export function mkNanopub(assertion: Assertion, provenance: Provenance, publicat
     provenance,
     publicationInfo
   };
+}
+
+export function isEqual(np1: Nanopub, np2: Nanopub): boolean {
+  return _.isEqual(np1.assertion, np2.assertion);
 }
