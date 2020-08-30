@@ -1,7 +1,7 @@
 // Source: http://nanopub.org
 
 import _ from "lodash";
-import { AnCreator, AnGenerator } from "./annotationsModel";
+import type { AnCreator, AnGenerator } from "./annotationsModel";
 import { mkGenerator } from "./annotationsModel";
 import * as utils from "./utils";
 
