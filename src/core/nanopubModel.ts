@@ -1,7 +1,11 @@
+// Source: http://nanopub.org
+
 import _ from "lodash";
 import { AnCreator, AnGenerator } from "./annotationsModel";
 import { mkGenerator } from "./annotationsModel";
 import * as utils from "./utils";
+
+export { mkCreator } from "./annotationsModel";
 
 export const nanopubsUrl = "/nanopubs";
 
@@ -53,11 +57,8 @@ export function mkAssertion(subject: Term, predicate: Term, object: Term): Asser
 }
 
 export interface Provenance {
+  anchor: string;
   creator: AnCreator;
-}
-
-export function mkProvenance(creator: AnCreator): Provenance {
-  return { creator };
 }
 
 export interface PublicationInfo {
@@ -65,11 +66,11 @@ export interface PublicationInfo {
   generator: AnGenerator;
 }
 
-export function mkPublicationInfo(version: string): PublicationInfo {
+export function mkPublicationInfo(genVersion: string): PublicationInfo {
   const ts = utils.mkTimestamp();
   return {
     created: ts,
-    generator: mkGenerator(version)
+    generator: mkGenerator(genVersion)
   };
 }
 
@@ -89,6 +90,14 @@ export function mkNanopub(assertion: Assertion, provenance: Provenance, publicat
     provenance,
     publicationInfo
   };
+}
+
+export function getNpId(np: Nanopub): string {
+  return utils.extractId(np.id);
+}
+
+export function getCreatorId(np: Nanopub): string {
+  return utils.extractId(np.provenance.creator.id);
 }
 
 export function isEqual(np1: Nanopub, np2: Nanopub): boolean {
