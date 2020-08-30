@@ -113,12 +113,12 @@ export interface AnGenerator {
   homepage: string;
 }
 
-export function mkGenerator(version: string): AnGenerator {
+export function mkGenerator(name: string, version: string, homepage: string): AnGenerator {
   return {
     type: "Software",
-    name: "B2NOTE",
+    name,
     version,
-    homepage: "https://b2note.bsc.es",
+    homepage,
   };
 }
 

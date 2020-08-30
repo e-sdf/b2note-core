@@ -66,11 +66,11 @@ export interface PublicationInfo {
   generator: AnGenerator;
 }
 
-export function mkPublicationInfo(genVersion: string): PublicationInfo {
+export function mkPublicationInfo(genName: string, genVersion: string, genHomepage: string): PublicationInfo {
   const ts = utils.mkTimestamp();
   return {
     created: ts,
-    generator: mkGenerator(genVersion)
+    generator: mkGenerator(genName, genVersion, genHomepage)
   };
 }
 
