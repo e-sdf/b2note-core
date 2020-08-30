@@ -10,9 +10,3 @@ export function mkFileExt(format: FormatType): string {
     [FormatType.RDF]: () => "rdf"
   });
 }
-
-export function setDownloadHeader(resp: Response, fname: string, format: FormatType): void {
-  const ext = mkFileExt(format);
-  resp.setHeader("Content-Disposition", "attachment");
-  resp.setHeader("filename", fname + "." + ext);
-}
