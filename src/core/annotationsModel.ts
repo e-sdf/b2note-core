@@ -173,6 +173,8 @@ export interface Annotation {
   visibility: VisibilityEnum; // Web Annotation Model B2NOTE extension
 }
 
+export type AnnotationPartial = Partial<Annotation>;
+
 export function mkSemanticAnBody(sources: Array<string>, value: string): AnCompositeBody {
   const specificItems = sources.map(source => mkAnBodyItemSpecific(source));
   const textualItem = mkAnBodyItemTextual(value);

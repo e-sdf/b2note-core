@@ -82,6 +82,8 @@ export interface Nanopub {
   publicationInfo: PublicationInfo;
 }
 
+export type NanopubPartial = Partial<Nanopub>
+
 export function mkNanopub(assertion: Assertion, provenance: Provenance, publicationInfo: PublicationInfo): Nanopub {
   return {
     "@context": "http://www.w3.org/ns/anno/jsonld",
