@@ -1,8 +1,12 @@
 // Annotations model according to <https://www.w3.org/TR/annotation-model>
 
-import * as utils from "./utils";
+import _ from "lodash";
+import { matchSwitch } from "@babakness/exhaustive-type-checking";
 
-// Annotating {{{1
+import * as utils from "./utils";
+import type { Triple } from "./tripleModel";
+
+// Annotation {{{1
 
 export const annotationsUrl = "/annotations";
 export const targetsUrl = "/targets";
@@ -16,23 +20,33 @@ export type PID = string;
 export type CreatorPID = PID;
 export type AnPID = PID;
 
+// Body Items {{{2
+
 export enum AnBodyItemType {
   COMPOSITE = "Composite",
   SPECIFIC_RESOURCE = "SpecificResource",
   TEXTUAL_BODY = "TextualBody"
 }
 
-export interface AnBodyItemSpecific {
+// SpecificResource {{{3
+
+export interface AnBodyItemSpecificResource {
   type: AnBodyItemType.SPECIFIC_RESOURCE;
   source: string;
 }
 
-export function mkAnBodyItemSpecific(source: string): AnBodyItemSpecific {
+export function mkAnBodyItemSpecificResource(source: string): AnBodyItemSpecificResource {
   return {
     type: AnBodyItemType.SPECIFIC_RESOURCE,
     source
   };
 }
+
+export function isAnBodyItemSpecificResource(item: AnBodyItem): boolean {
+  return item.type === AnBodyItemType.SPECIFIC_RESOURCE;
+}
+
+// Textual {{{3
 
 export interface AnBodyItemTextual {
   type: AnBodyItemType.TEXTUAL_BODY;
@@ -46,28 +60,30 @@ export function mkAnBodyItemTextual(value: string): AnBodyItemTextual {
   };
 }
 
-export type AnBodyItem = AnBodyItemSpecific | AnBodyItemTextual;
-
-export function isSpecificResourceBodyItem(bodyItem: AnBodyItem): boolean {
-  return bodyItem.type === AnBodyItemType.SPECIFIC_RESOURCE;
+export function isAnBodyItemTextual(item: AnBodyItem): boolean {
+  return item.type === AnBodyItemType.TEXTUAL_BODY;
 }
 
-export function isTextualBodyItem(bodyItem: AnBodyItem): boolean {
-  return bodyItem.type === AnBodyItemType.TEXTUAL_BODY;
-}
+export type AnBodyItem = AnBodyItemSpecificResource | AnBodyItemTextual;
+
+// Bodies {{{2
 
 export enum PurposeType {
   TAGGING = "tagging",
   COMMENTING = "commenting"
 }
 
-export interface AnCompositeBody {
+// Semantic {{{3
+
+export interface SemanticAnBody {
   type: AnBodyItemType.COMPOSITE;
   items: Array<AnBodyItem>;
   purpose: PurposeType.TAGGING;
 }
 
-export function mkCompositeBody(specificItems: Array<AnBodyItemSpecific>, textualItem: AnBodyItemTextual): AnCompositeBody {
+export function mkSemanticAnBody(sources: Array<string>, value: string): SemanticAnBody {
+  const specificItems = sources.map(source => mkAnBodyItemSpecificResource(source));
+  const textualItem = mkAnBodyItemTextual(value);
   return {
     type: AnBodyItemType.COMPOSITE,
     items: [...specificItems, textualItem],
@@ -75,52 +91,97 @@ export function mkCompositeBody(specificItems: Array<AnBodyItemSpecific>, textua
   };
 }
 
-export interface AnTextualBody {
-  type: AnBodyItemType.TEXTUAL_BODY;
-  value: string;
-  purpose: PurposeType;
+export function isSemanticAnBody(body: AnBody): boolean {
+  return body.type === AnBodyItemType.COMPOSITE;
 }
 
-export function mkTextualBody(value: string, purpose: PurposeType): AnTextualBody {
+export function getLabelOfSemanticBody(body: SemanticAnBody): string {
+  const item = body.items.filter(isAnBodyItemTextual)[0];
+  if (!item) {
+    throw new Error("TextualBody record not found in body item");
+  } else {
+    const textualItem = item as AnBodyItemTextual;
+    if (!textualItem.value) {
+      throw new Error("Value field not found in TextualBody item");
+    } else {
+      return textualItem.value;
+    }
+  }
+}
+
+// Keyword {{{3
+
+export interface KeywordAnBody {
+  type: AnBodyItemType.TEXTUAL_BODY;
+  value: string;
+  purpose: PurposeType.TAGGING
+}
+
+export function mkKeywordAnBody(value: string): KeywordAnBody {
   return {
     type: AnBodyItemType.TEXTUAL_BODY,
     value,
-    purpose
+    purpose: PurposeType.TAGGING
   };
 }
 
-export type AnBody = AnCompositeBody | AnTextualBody;
-
-export interface Creator {
-  id: ID;
+export function isKeywordAnBody(body: AnBody): boolean {
+  return body.type === AnBodyItemType.TEXTUAL_BODY && body.purpose === PurposeType.TAGGING;
 }
 
-export interface AnCreator extends Creator {
-  type: string;
+export function getLabelOfKeywordBody(body: KeywordAnBody): string {
+  return body.value;
 }
 
-export function mkCreator(creator: Creator): AnCreator {
+// Comment {{{3
+
+export interface CommentAnBody {
+  type: AnBodyItemType.TEXTUAL_BODY;
+  value: string;
+  purpose: PurposeType.COMMENTING;
+}
+
+export function mkCommentAnBody(value: string): CommentAnBody {
   return {
-    ...creator,
-    type: "Person"
+    type: AnBodyItemType.TEXTUAL_BODY,
+    value,
+    purpose: PurposeType.COMMENTING
   };
 }
 
-export interface AnGenerator {
-  type: string;
-  name: string;
-  version: string;
-  homepage: string;
+export function isCommentAnBody(body: AnBody): boolean {
+  return body.type === AnBodyItemType.TEXTUAL_BODY && body.purpose === PurposeType.COMMENTING;
 }
 
-export function mkGenerator(name: string, version: string, homepage: string): AnGenerator {
+export function getLabelOfCommentBody(body: CommentAnBody): string {
+  return body.value;
+}
+
+// Triple {{{3
+
+export interface TripleAnBody {
+  type: AnBodyItemType.SPECIFIC_RESOURCE;
+  value: Triple;
+  purpose: PurposeType.TAGGING;
+}
+
+export function mkTripleAnBody(triple: Triple): TripleAnBody {
   return {
-    type: "Software",
-    name,
-    version,
-    homepage,
+    type: AnBodyItemType.SPECIFIC_RESOURCE,
+    value: triple,
+    purpose: PurposeType.TAGGING
   };
 }
+
+export function isTripleAnBody(body: AnBody): boolean {
+  return body.type === AnBodyItemType.SPECIFIC_RESOURCE;
+}
+
+// }}}3
+
+export type AnBody = SemanticAnBody | KeywordAnBody | CommentAnBody | TripleAnBody;
+
+// Target {{{2
 
 export interface TextPositionSelector {
   type: "TextPositionSelector";
@@ -153,11 +214,47 @@ export interface AnTarget {
   type: string;
 }
 
-// Web Annotation Model B2NOTE extension
+// Provenance {{{2
+
+export interface Creator {
+  id: ID;
+}
+
+export interface AnCreator extends Creator {
+  type: string;
+}
+
+export function mkCreator(creator: Creator): AnCreator {
+  return {
+    ...creator,
+    type: "Person"
+  };
+}
+
+export interface AnGenerator {
+  type: string;
+  name: string;
+  version: string;
+  homepage: string;
+}
+
+export function mkGenerator(name: string, version: string, homepage: string): AnGenerator {
+  return {
+    type: "Software",
+    name,
+    version,
+    homepage,
+  };
+}
+
+// Web Annotation Model B2NOTE extension {{{2
+
 export enum VisibilityEnum {
   PRIVATE = "private",
   PUBLIC = "public"
 }
+
+// }}}2
 
 export interface Annotation {
   "@context": string;
@@ -174,20 +271,6 @@ export interface Annotation {
 }
 
 export type AnnotationPartial = Partial<Annotation>;
-
-export function mkSemanticAnBody(sources: Array<string>, value: string): AnCompositeBody {
-  const specificItems = sources.map(source => mkAnBodyItemSpecific(source));
-  const textualItem = mkAnBodyItemTextual(value);
-  return mkCompositeBody(specificItems, textualItem);
-}
-
-export function mkKeywordAnBody(value: string): AnTextualBody {
-  return mkTextualBody(value, PurposeType.TAGGING);
-}
-
-export function mkCommentAnBody(value: string): AnTextualBody {
-  return mkTextualBody(value, PurposeType.COMMENTING);
-}
 
 export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType, visibility: VisibilityEnum): Annotation {
   const ts = utils.mkTimestamp();
@@ -214,24 +297,29 @@ export function getCreatorId(an: Annotation): ID {
   return utils.extractId(an.creator.id);
 }
 
+// Querying {{{1
+
 export enum AnnotationType {
   SEMANTIC = "semantic",
   KEYWORD = "keyword",
-  COMMENT = "comment"
+  COMMENT = "comment",
+  TRIPLE = "triple"
 }
 
-// Querying {{{1
-
 export function isSemantic(annotation: Annotation): boolean {
-  return annotation.body.type === AnBodyItemType.COMPOSITE;
+  return isSemanticAnBody(annotation.body);
 }
 
 export function isKeyword(annotation: Annotation): boolean {
-  return annotation.motivation === PurposeType.TAGGING && annotation.body.type === AnBodyItemType.TEXTUAL_BODY;
+  return isKeywordAnBody(annotation.body);
 }
 
 export function isComment(annotation: Annotation): boolean {
-  return annotation.motivation === PurposeType.COMMENTING && annotation.body.type === AnBodyItemType.TEXTUAL_BODY;
+  return isCommentAnBody(annotation.body);
+}
+
+export function isTriple(annotation: Annotation): boolean {
+  return isTripleAnBody(annotation.body);
 }
 
 export function getAnType(annotation: Annotation): AnnotationType {
@@ -243,29 +331,18 @@ export function getAnType(annotation: Annotation): AnnotationType {
 }
 
 export function getLabel(annotation: Annotation): string {
-  if (isSemantic(annotation)) {
-    const anBody = annotation.body as AnCompositeBody;
-    const item = anBody.items.filter((i: AnBodyItem) => i.type === AnBodyItemType.TEXTUAL_BODY )[0];
-    if (!item) {
-      throw new Error("TextualBody record not found in body item");
-    } else {
-      const textualItem = item as AnTextualBody;
-      if (!textualItem.value) {
-        throw new Error("Value field not found in TextualBody item");
-      } else {
-        return textualItem.value;
-      }
-    }
-  } else {
-    const anBody = annotation.body as AnTextualBody;
-    return anBody.value;
-  }
+  return matchSwitch(getAnType(annotation), {
+    [AnnotationType.SEMANTIC]: () => getLabelOfSemanticBody(annotation.body as SemanticAnBody),
+    [AnnotationType.KEYWORD]: () => getLabelOfKeywordBody(annotation.body as KeywordAnBody),
+    [AnnotationType.COMMENT]: () => getLabelOfCommentBody(annotation.body as CommentAnBody),
+    [AnnotationType.TRIPLE]: () => "<Triple>"
+  });
 }
 
 export function isEqual(an1: Annotation, an2: Annotation): boolean {
   return (
     getAnType(an1) === getAnType(an2) &&
-    getLabel(an1) === getLabel(an2) &&
+    _.isEqual(an1.body, an2.body) &&
     an1.creator.id === an2.creator.id
   );
 }
@@ -276,8 +353,8 @@ export function isMine(annotation: Annotation, userPID: PID|null): boolean {
 
 export function getSources(annotation: Annotation): Array<string> {
   if (isSemantic(annotation)) {
-    const anBody = annotation.body as AnCompositeBody;
-    const specificItems = anBody.items.filter((i: AnBodyItem) => i.type === AnBodyItemType.SPECIFIC_RESOURCE) as Array<AnBodyItemSpecific>;
+    const anBody = annotation.body as SemanticAnBody;
+    const specificItems = anBody.items.filter(isAnBodyItemSpecificResource) as Array<AnBodyItemSpecificResource>;
     return specificItems.map(i => i.source);
   } else {
     return [];

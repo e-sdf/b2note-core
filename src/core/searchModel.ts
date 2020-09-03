@@ -1,6 +1,6 @@
 export const searchUrl = "/search";
 
-export enum SearchType { SEMANTIC = "semantic", KEYWORD = "keyword", COMMENT = "comment", REGEX = "regex" };
+export enum SearchType { SEMANTIC = "semantic", KEYWORD = "keyword", COMMENT = "comment", REGEX = "regex" }
 
 export enum BiOperatorType { AND = "AND", OR = "OR", XOR = "XOR" }
 

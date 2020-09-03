@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { Annotation, AnGenerator, AnCreator } from "../annotationsModel";
+import type { Annotation, AnGenerator, AnCreator, TripleAnBody } from "../annotationsModel";
 import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 import { usersUrl } from "../user";
 import { mkTimestamp } from "../utils";
@@ -37,12 +37,19 @@ function body2ttl(an: Annotation): Turtle[] {
     ];
   }
 
+  function mkTripleAnBody(tripleAnBody: TripleAnBody): Turtle[] {
+    return [
+      "Triple body: TODO"
+    ];
+  }
+
   function mkBody(): Turtle[] {
     const value = getLabel(an);
     return matchSwitch(getAnType(an), {
       [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
       [AnnotationType.KEYWORD]: () => mkKeywordAnBody(value),
       [AnnotationType.COMMENT]: () => mkCommentAnBody(value),
+      [AnnotationType.TRIPLE]: () => mkTripleAnBody(an.body as TripleAnBody)
     });
   }
 

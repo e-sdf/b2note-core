@@ -2,7 +2,7 @@ import _ from "lodash";
 import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-import type { PID, Annotation, AnGenerator } from "../annotationsModel";
+import type { PID, Annotation, AnGenerator, TripleAnBody } from "../annotationsModel";
 import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
 import { usersUrl } from "../user";
 
@@ -130,6 +130,13 @@ function mkCommentAnBody(value: string): [string, Record<string, any>] {
   }];
 }
 
+function mkTripleAnBody(tripleAnBody: TripleAnBody): [string, Record<string, any>] {
+  const uuid = mkId();
+  return [uuid, {
+    todo: "Triple Body: TODO"
+  }];
+}
+
 function mkTagging(): Record<string, any> {
   return {
     "ns1:motivatedBy": {
@@ -151,7 +158,8 @@ function mkBody(an: Annotation): [string, Record<string, any>, any[]] {
   return matchSwitch(getAnType(an), {
     [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
     [AnnotationType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
-    [AnnotationType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]]
+    [AnnotationType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]],
+    [AnnotationType.TRIPLE]: () => [ ...mkTripleAnBody(an.body as TripleAnBody), [] ] as [string, Record<string, any>, any[]],
   });
 }
 
