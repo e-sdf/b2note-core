@@ -31,6 +31,10 @@ export function mkSemanticTerm(value: string, uris: Array<string>): SemanticTerm
 
 export type Term = KeywordTerm | SemanticTerm;
 
+export function getTermLabel(term: Term): string {
+  return term.value;
+}
+
 export interface Triple {
   subject: Term;
   predicate: Term;
@@ -43,4 +47,8 @@ export function mkTriple(subject: Term, predicate: Term, object: Term): Triple {
     predicate,
     object
   };
+}
+
+export function getTripleLabel(triple: Triple): string {
+  return getTermLabel(triple.subject) + "-" + getTermLabel(triple.predicate) + "-" + getTermLabel(triple.object);
 }

@@ -5,6 +5,7 @@ import { matchSwitch } from "@babakness/exhaustive-type-checking";
 
 import * as utils from "./utils";
 import type { Triple } from "./tripleModel";
+import * as tripleModel from "./tripleModel";
 
 // Annotation {{{1
 
@@ -338,7 +339,7 @@ export function getLabel(annotation: Annotation): string {
     [AnnotationType.SEMANTIC]: () => getLabelOfSemanticBody(annotation.body as SemanticAnBody),
     [AnnotationType.KEYWORD]: () => getLabelOfKeywordBody(annotation.body as KeywordAnBody),
     [AnnotationType.COMMENT]: () => getLabelOfCommentBody(annotation.body as CommentAnBody),
-    [AnnotationType.TRIPLE]: () => "<Triple>",
+    [AnnotationType.TRIPLE]: () => tripleModel.getTripleLabel((annotation.body as TripleAnBody).value),
     [AnnotationType.UNKNOWN]: () => "Unknown annotation type"
   });
 }
