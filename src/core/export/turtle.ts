@@ -49,7 +49,8 @@ function body2ttl(an: Annotation): Turtle[] {
       [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
       [AnnotationType.KEYWORD]: () => mkKeywordAnBody(value),
       [AnnotationType.COMMENT]: () => mkCommentAnBody(value),
-      [AnnotationType.TRIPLE]: () => mkTripleAnBody(an.body as TripleAnBody)
+      [AnnotationType.TRIPLE]: () => mkTripleAnBody(an.body as TripleAnBody),
+      [AnnotationType.UNKNOWN]: () => []
     });
   }
 

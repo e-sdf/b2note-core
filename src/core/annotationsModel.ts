@@ -303,7 +303,8 @@ export enum AnnotationType {
   SEMANTIC = "semantic",
   KEYWORD = "keyword",
   COMMENT = "comment",
-  TRIPLE = "triple"
+  TRIPLE = "triple",
+  UNKNOWN = "unknown"
 }
 
 export function isSemantic(annotation: Annotation): boolean {
@@ -326,7 +327,9 @@ export function getAnType(annotation: Annotation): AnnotationType {
   return (
       isSemantic(annotation) ? AnnotationType.SEMANTIC
     : isKeyword(annotation) ? AnnotationType.KEYWORD
-    : AnnotationType.COMMENT
+    : isComment(annotation) ? AnnotationType.COMMENT
+    : isTriple(annotation) ? AnnotationType.TRIPLE
+    : AnnotationType.UNKNOWN
   );
 }
 
@@ -335,7 +338,8 @@ export function getLabel(annotation: Annotation): string {
     [AnnotationType.SEMANTIC]: () => getLabelOfSemanticBody(annotation.body as SemanticAnBody),
     [AnnotationType.KEYWORD]: () => getLabelOfKeywordBody(annotation.body as KeywordAnBody),
     [AnnotationType.COMMENT]: () => getLabelOfCommentBody(annotation.body as CommentAnBody),
-    [AnnotationType.TRIPLE]: () => "<Triple>"
+    [AnnotationType.TRIPLE]: () => "<Triple>",
+    [AnnotationType.UNKNOWN]: () => "Unknown annotation type"
   });
 }
 
