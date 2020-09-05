@@ -2,6 +2,18 @@ import _ from "lodash";
 import axios from "axios";
 import { axiosErrToMsg } from "./utils";
 
+export enum OntologyFormat {
+  TURTLE = "Turtle",
+  N_TRIPLES = "N-Triples",
+  N_QUADS = "N-Quads",
+  TRIG = "TriG",
+  RDF_XML= "RDF/XML",
+  JSON_LD = "JSON-LD",
+  RDF_THIFT = "RDF Thrift",
+  RDF_JSON = "RDF/JSON",
+  TRIX = "TriX"
+}
+
 export interface OntologyInfo {
   labels: string;
   descriptions: Array<string>;
