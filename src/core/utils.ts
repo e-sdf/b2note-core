@@ -7,9 +7,12 @@ export function mkTimestamp(): string {
 
 export function axiosErrToMsg(error: AxiosError): string {
   if (error.response) {
+    const resp = error.response;
     // Request made and server responded
     console.error(error.response);
-    return `${error.response.data.error} (${error.response.status}): ${error.response.data.message}`;
+    const code = resp.data?.error || "";
+    const msg = resp.data?.message || resp.statusText || "";
+    return `${code}(${resp.status}) ${msg}`;
   } else if (error.request) {
     // The request was made but no response was received
     console.error("Server not responding to request:");
