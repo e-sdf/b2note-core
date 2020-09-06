@@ -14,7 +14,12 @@ export enum OntologyFormat {
   TRIX = "TriX"
 }
 
-export interface OntologyInfo {
+export interface Ontology {
+  uri: string;
+  terms: Array<OntologyTerm>;
+}
+
+export interface OntologyTerm {
   labels: string;
   descriptions: Array<string>;
   shortForm: string;
@@ -24,7 +29,19 @@ export interface OntologyInfo {
   uris: string;
 }
 
-export type OntologyDict = Record<string, Array<OntologyInfo>>
+export function mkOntologyTerm(uri: string, label: string): OntologyTerm {
+  return {
+    labels: label,
+    descriptions: [],
+    shortForm: "",
+    ontologyName: "",
+    ontologyAcronym: "",
+    synonyms: [],
+    uris: uri
+  };
+}
+
+export type OntologyDict = Record<string, Array<OntologyTerm>>
 
 // SOLR requires a non-standard encoding where just # and " are encoded
 function encodeSolrQuery(uri: string): string {
@@ -45,7 +62,7 @@ function mkSolrQueryUrl(solrUrl: string, query: string): string {
 }
 
 function resultToDict(docs: any): OntologyDict {
-  const ontologies: Array<OntologyInfo> = docs.map((o: any): OntologyInfo => ({
+  const ontologies: Array<OntologyTerm> = docs.map((o: any): OntologyTerm => ({
     labels: o.labels || "",
     descriptions: o.description || "",
     shortForm: o.short_form || "",
@@ -59,7 +76,7 @@ function resultToDict(docs: any): OntologyDict {
   return groups;
 }
 
-export async function getOntologies(solrUrl: string, query: string): Promise<OntologyDict> {
+export async function getOTerms(solrUrl: string, query: string): Promise<OntologyDict> {
   return new Promise((resolve, reject) => {
     axios.get(mkSolrQueryUrl(solrUrl, query)).then(
       resp => resolve(resultToDict(resp.data?.response?.docs)),
@@ -70,7 +87,7 @@ export async function getOntologies(solrUrl: string, query: string): Promise<Ont
 
 // Getting ontology info {{{1
 
-export function getInfo(solrUrl: string, ontologyUri: string): Promise<OntologyInfo> {
+export function getInfo(solrUrl: string, ontologyUri: string): Promise<OntologyTerm> {
   return new Promise((resolve, reject) => {
     const queryUrl = encodeSolrQuery(solrUrl + '?q=uris:("' + ontologyUri + '")&rows=100&wt=json');
     axios.get(queryUrl).then(
