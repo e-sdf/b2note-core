@@ -3,7 +3,7 @@ import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { PID, Annotation, AnGenerator, TripleAnBody } from "../annotationsModel";
-import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
+import { annotationsUrl, AnBodyType, getAnBodyType, getSources, getLabel, isCommentAnBody } from "../annotationsModel";
 import { usersUrl } from "../user";
 
 function mkId(): string {
@@ -155,12 +155,12 @@ function mkCommenting(): Record<string, any> {
 
 function mkBody(an: Annotation): [string, Record<string, any>, any[]] {
   const value = getLabel(an);
-  return matchSwitch(getAnType(an), {
-    [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
-    [AnnotationType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
-    [AnnotationType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]],
-    [AnnotationType.TRIPLE]: () => [ ...mkTripleAnBody(an.body as TripleAnBody), [] ] as [string, Record<string, any>, any[]],
-    [AnnotationType.UNKNOWN]: () => ["unknown", {}, []]
+  return matchSwitch(getAnBodyType(an.body), {
+    [AnBodyType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
+    [AnBodyType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
+    [AnBodyType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]],
+    [AnBodyType.TRIPLE]: () => [ ...mkTripleAnBody(an.body as TripleAnBody), [] ] as [string, Record<string, any>, any[]],
+    [AnBodyType.UNKNOWN]: () => ["unknown", {}, []]
   });
 }
 
@@ -172,7 +172,7 @@ function mkDescItems(an: Annotation, serverUrl: string): any[] {
   return [
     {
       "@rdf:about": serverUrl + annotationsUrl + "/" + an.id,
-      ...(isComment(an) ? mkCommenting() : mkTagging()),
+      ...(isCommentAnBody(an.body) ? mkCommenting() : mkTagging()),
       "ns2:generator": {
         "@rdf:nodeID": generatorUUID
       },

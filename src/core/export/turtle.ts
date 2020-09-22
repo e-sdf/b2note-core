@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { Annotation, AnGenerator, AnCreator, TripleAnBody } from "../annotationsModel";
-import { annotationsUrl, AnnotationType, getAnType, getSources, getLabel, isComment } from "../annotationsModel";
+import { annotationsUrl, AnBodyType, getAnBodyType, getSources, getLabel, isCommentAnBody } from "../annotationsModel";
 import { usersUrl } from "../user";
 import { mkTimestamp } from "../utils";
 
@@ -45,12 +45,12 @@ function body2ttl(an: Annotation): Turtle[] {
 
   function mkBody(): Turtle[] {
     const value = getLabel(an);
-    return matchSwitch(getAnType(an), {
-      [AnnotationType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
-      [AnnotationType.KEYWORD]: () => mkKeywordAnBody(value),
-      [AnnotationType.COMMENT]: () => mkCommentAnBody(value),
-      [AnnotationType.TRIPLE]: () => mkTripleAnBody(an.body as TripleAnBody),
-      [AnnotationType.UNKNOWN]: () => []
+    return matchSwitch(getAnBodyType(an.body), {
+      [AnBodyType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
+      [AnBodyType.KEYWORD]: () => mkKeywordAnBody(value),
+      [AnBodyType.COMMENT]: () => mkCommentAnBody(value),
+      [AnBodyType.TRIPLE]: () => mkTripleAnBody(an.body as TripleAnBody),
+      [AnBodyType.UNKNOWN]: () => []
     });
   }
 
@@ -101,7 +101,7 @@ function an2ttl(an: Annotation, serverUrl: string): Turtle[] {
     ...(mkCreator(an.creator, serverUrl).filter(i => i !== null) as Turtle[]),
     `  dcterms:issued "${mkTimestamp()}"^^xsd:dateTime ;`,
     ...mkGenerator(an.generator),
-    ...(isComment(an) ? mkCommenting() : mkTagging())
+    ...(isCommentAnBody(an.body) ? mkCommenting() : mkTagging())
   ];
 }
 
