@@ -4,8 +4,6 @@ import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 
 import * as utils from "./utils";
-import type { Triple } from "./tripleModel";
-import * as tripleModel from "./tripleModel";
 
 // Annotation {{{1
 
@@ -160,6 +158,19 @@ export function getLabelOfCommentBody(body: CommentAnBody): string {
 
 // Triple {{{3
 
+export enum TripleTermType {
+  SEMANTIC = "semantic",
+  KEYWORD = "keyword"
+}
+
+export type TripleTerm = SemanticAnBody | KeywordAnBody;
+
+export interface Triple {
+  subject: TripleTerm;
+  predicate: TripleTerm;
+  object: TripleTerm;
+}
+
 export interface TripleAnBody {
   type: AnBodyItemType.SPECIFIC_RESOURCE;
   value: Triple;
@@ -174,10 +185,27 @@ export function mkTripleAnBody(triple: Triple): TripleAnBody {
   };
 }
 
+export function getTripleTermType(tripleTerm: TripleTerm): TripleTermType {
+  return matchSwitch(tripleTerm.type, {
+    [AnBodyItemType.COMPOSITE]: () => TripleTermType.SEMANTIC,
+    [AnBodyItemType.TEXTUAL_BODY]: () => TripleTermType.KEYWORD
+  });
+}
+
 export function isTripleAnBody(body: AnBody): boolean {
   return body.type === AnBodyItemType.SPECIFIC_RESOURCE;
 }
 
+export function getTripleTermLabel(tripleTerm: TripleTerm): string {
+  return matchSwitch(getTripleTermType(tripleTerm), {
+    [TripleTermType.SEMANTIC]: () => getLabelOfSemanticBody(tripleTerm as SemanticAnBody),
+    [TripleTermType.KEYWORD]: () => getLabelOfKeywordBody(tripleTerm as KeywordAnBody)
+  });
+}
+
+export function getLabelOfTripleBody(body: TripleAnBody): string {
+  return getTripleTermLabel(body.value.subject) + "-" + getTripleTermLabel(body.value.predicate) + "-" + getTripleTermLabel(body.value.object);
+}
 // }}}3
 
 export type AnBody = SemanticAnBody | KeywordAnBody | CommentAnBody | TripleAnBody;
@@ -339,7 +367,7 @@ export function getLabel(annotation: Annotation): string {
     [AnnotationType.SEMANTIC]: () => getLabelOfSemanticBody(annotation.body as SemanticAnBody),
     [AnnotationType.KEYWORD]: () => getLabelOfKeywordBody(annotation.body as KeywordAnBody),
     [AnnotationType.COMMENT]: () => getLabelOfCommentBody(annotation.body as CommentAnBody),
-    [AnnotationType.TRIPLE]: () => tripleModel.getTripleLabel((annotation.body as TripleAnBody).value),
+    [AnnotationType.TRIPLE]: () => getLabelOfTripleBody(annotation.body as TripleAnBody),
     [AnnotationType.UNKNOWN]: () => "Unknown annotation type"
   });
 }
