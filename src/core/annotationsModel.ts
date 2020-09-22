@@ -85,16 +85,16 @@ export enum PurposeType {
 export interface SemanticAnBody {
   type: AnBodyItemType.COMPOSITE;
   items: Array<AnBodyItem>;
-  purpose: PurposeType.TAGGING;
+  purpose?: PurposeType.TAGGING;
 }
 
-export function mkSemanticAnBody(sources: Array<string>, value: string): SemanticAnBody {
+export function mkSemanticAnBody(sources: Array<string>, value: string, hasPurpose = true): SemanticAnBody {
   const specificItems = sources.map(source => mkAnBodyItemSpecificResource(source));
   const textualItem = mkAnBodyItemTextual(value);
   return {
     type: AnBodyItemType.COMPOSITE,
     items: [...specificItems, textualItem],
-    purpose: PurposeType.TAGGING
+    ...hasPurpose ? { purpose: PurposeType.TAGGING } : {}
   };
 }
 
@@ -121,14 +121,14 @@ export function getLabelOfSemanticBody(body: SemanticAnBody): string {
 export interface KeywordAnBody {
   type: AnBodyItemType.TEXTUAL_BODY;
   value: string;
-  purpose: PurposeType.TAGGING
+  purpose?: PurposeType.TAGGING
 }
 
-export function mkKeywordAnBody(value: string): KeywordAnBody {
+export function mkKeywordAnBody(value: string, hasPurpose = true): KeywordAnBody {
   return {
     type: AnBodyItemType.TEXTUAL_BODY,
     value,
-    purpose: PurposeType.TAGGING
+    ...hasPurpose ? { purpose: PurposeType.TAGGING } : {}
   };
 }
 
@@ -171,7 +171,10 @@ export enum TripleTermType {
   KEYWORD = "keyword"
 }
 
-export type TripleTerm = SemanticAnBody | KeywordAnBody;
+export type SemanticTripleBody = SemanticAnBody;
+export type KeywordTripleBody = KeywordAnBody;
+
+export type TripleTerm = SemanticTripleBody | KeywordTripleBody;
 
 export interface Triple {
   subject: TripleTerm;
@@ -179,10 +182,22 @@ export interface Triple {
   object: TripleTerm;
 }
 
+export function mkTriple(subject: TripleTerm, predicate: TripleTerm, object: TripleTerm): Triple {
+  return { subject, predicate, object };
+}
+
 export interface TripleAnBody {
   type: AnBodyItemType.SPECIFIC_RESOURCE;
   value: Triple;
   purpose: PurposeType.TAGGING;
+}
+
+export function mkSemanticTripleTerm(sources: Array<string>, value: string): SemanticTripleBody {
+  return mkSemanticAnBody(sources, value, false);
+}
+
+export function mkKeywordTripleTerm(value: string): KeywordTripleBody {
+  return mkKeywordAnBody(value, false);
 }
 
 export function mkTripleAnBody(triple: Triple): TripleAnBody {
