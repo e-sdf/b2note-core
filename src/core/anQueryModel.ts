@@ -2,7 +2,7 @@ import * as an from "./annotationsModel";
 import * as formats from "./formats";
 
 export interface GetAnQuery {
-  type?: Array<an.AnnotationType>;
+  type?: Array<an.AnBodyType>;
   creator?: string;
   "target-id"?: string;
   "target-source"?: string;

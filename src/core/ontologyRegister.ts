@@ -41,7 +41,7 @@ export function mkOntologyTerm(uri: string, label: string): OntologyTerm {
   };
 }
 
-export type OntologyDict = Record<string, Array<OntologyTerm>>
+export type OTermsDict = Record<string, Array<OntologyTerm>>
 
 // SOLR requires a non-standard encoding where just # and " are encoded
 function encodeSolrQuery(uri: string): string {
@@ -61,7 +61,16 @@ function mkSolrQueryUrl(solrUrl: string, query: string): string {
   return res;
 }
 
-function resultToDict(docs: any): OntologyDict {
+function mkSolrExactQueryUrl(solrUrl: string, tag: string): string {
+  const q = `(labels:/${tag}/)`;
+  const notErrors = "%20AND%20NOT%20(labels:/Error[0-9].*/)";
+  const sort = "&sort=norm(labels) desc";
+  const flags = "&wt=json&indent=true&rows=1000";
+  const res = solrUrl + "?q=(" + q + notErrors + ")" + sort + flags;
+  return res;
+}
+
+function resultToDict(docs: any): OTermsDict {
   const ontologies: Array<OntologyTerm> = docs.map((o: any): OntologyTerm => ({
     labels: o.labels || "",
     descriptions: o.description || "",
@@ -76,9 +85,18 @@ function resultToDict(docs: any): OntologyDict {
   return groups;
 }
 
-export async function getOTerms(solrUrl: string, query: string): Promise<OntologyDict> {
+export async function getOTerms(solrUrl: string, query: string): Promise<OTermsDict> {
   return new Promise((resolve, reject) => {
     axios.get(mkSolrQueryUrl(solrUrl, query)).then(
+      resp => resolve(resultToDict(resp.data?.response?.docs)),
+      err => reject(axiosErrToMsg(err))
+    ).catch(err => reject(axiosErrToMsg(err)));
+  });
+}
+
+export async function getOTerm(solrUrl: string, tag: string): Promise<OTermsDict> {
+  return new Promise((resolve, reject) => {
+    axios.get(mkSolrExactQueryUrl(solrUrl, tag)).then(
       resp => resolve(resultToDict(resp.data?.response?.docs)),
       err => reject(axiosErrToMsg(err))
     ).catch(err => reject(axiosErrToMsg(err)));
