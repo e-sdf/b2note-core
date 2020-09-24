@@ -3,7 +3,7 @@ import xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { PID, Annotation, AnGenerator, TripleAnBody } from "../annotationsModel";
-import { annotationsUrl, AnBodyType, getAnBodyType, getSources, getLabel, isCommentAnBody } from "../annotationsModel";
+import { annotationsUrl, AnBodyType, getAnBodyType, getSourcesFromAnBody, getLabel, isCommentAnBody } from "../annotationsModel";
 import { usersUrl } from "../user";
 
 function mkId(): string {
@@ -156,10 +156,11 @@ function mkCommenting(): Record<string, any> {
 function mkBody(an: Annotation): [string, Record<string, any>, any[]] {
   const value = getLabel(an);
   return matchSwitch(getAnBodyType(an.body), {
-    [AnBodyType.SEMANTIC]: () => mkCompositeBody(getSources(an), value),
+    [AnBodyType.SEMANTIC]: () => mkCompositeBody(getSourcesFromAnBody(an.body), value),
     [AnBodyType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
     [AnBodyType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]],
     [AnBodyType.TRIPLE]: () => [ ...mkTripleAnBody(an.body as TripleAnBody), [] ] as [string, Record<string, any>, any[]],
+    [AnBodyType.TRIPLE_TERM]: () => ["unknown", {}, []],
     [AnBodyType.UNKNOWN]: () => ["unknown", {}, []]
   });
 }

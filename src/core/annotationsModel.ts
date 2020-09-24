@@ -72,6 +72,7 @@ export enum AnBodyType {
   KEYWORD = "keyword",
   COMMENT = "comment",
   TRIPLE = "triple",
+  TRIPLE_TERM = "tripleTerm",
   UNKNOWN = "unknown"
 }
 
@@ -99,7 +100,7 @@ export function mkSemanticAnBody(sources: Array<string>, value: string, hasPurpo
 }
 
 export function isSemanticAnBody(body: AnBody): boolean {
-  return body.type === AnBodyItemType.COMPOSITE;
+  return body.type === AnBodyItemType.COMPOSITE && !isTripleTerm(body);
 }
 
 export function getLabelOfSemanticBody(body: SemanticAnBody): string {
@@ -165,16 +166,35 @@ export function getLabelOfCommentBody(body: CommentAnBody): string {
 }
 
 // Triple {{{3
+// Triple Term {{{4
 
 export enum TripleTermType {
   SEMANTIC = "semantic",
   KEYWORD = "keyword"
 }
 
-export type SemanticTripleBody = SemanticAnBody;
-export type KeywordTripleBody = KeywordAnBody;
+export type SemanticTripleTerm = SemanticAnBody;
+export type KeywordTripleTerm = KeywordAnBody;
 
-export type TripleTerm = SemanticTripleBody | KeywordTripleBody;
+export type TripleTerm = SemanticTripleTerm | KeywordTripleTerm;
+
+export function getLabelOfTripleTerm(term: TripleTerm): string {
+  return getLabelFromBody(term);
+}
+
+export function isTripleTerm(term: TripleTerm|AnBody): boolean {
+  return term.purpose == null;
+}
+
+export function isSemanticTripleTerm(term: TripleTerm|AnBody): boolean {
+  return term.type === AnBodyItemType.COMPOSITE && term.purpose == null;
+}
+
+export function isKeywordTripleTerm(term: TripleTerm|AnBody): boolean {
+  return term.type === AnBodyItemType.TEXTUAL_BODY && term.purpose == null;
+}
+
+// }}}4
 
 export interface Triple {
   subject: TripleTerm;
@@ -186,19 +206,21 @@ export function mkTriple(subject: TripleTerm, predicate: TripleTerm, object: Tri
   return { subject, predicate, object };
 }
 
+export function mkSemanticTripleTerm(sources: Array<string>, value: string): SemanticTripleTerm {
+  return mkSemanticAnBody(sources, value, false);
+}
+
+export function mkKeywordTripleTerm(value: string): KeywordTripleTerm {
+  return mkKeywordAnBody(value, false);
+}
+
 export interface TripleAnBody {
   type: AnBodyItemType.SPECIFIC_RESOURCE;
   value: Triple;
   purpose: PurposeType.TAGGING;
 }
 
-export function mkSemanticTripleTerm(sources: Array<string>, value: string): SemanticTripleBody {
-  return mkSemanticAnBody(sources, value, false);
-}
 
-export function mkKeywordTripleTerm(value: string): KeywordTripleBody {
-  return mkKeywordAnBody(value, false);
-}
 
 export function mkTripleAnBody(triple: Triple): TripleAnBody {
   return {
@@ -230,6 +252,12 @@ export function getLabelOfTripleBody(body: TripleAnBody): string {
   return getTripleTermLabel(body.value.subject) + "-" + getTripleTermLabel(body.value.predicate) + "-" + getTripleTermLabel(body.value.object);
 }
 
+export function getSourcesFromTripleTerm(term: TripleTerm): Array<string> {
+  return isSemanticTripleTerm(term) ?
+    getSourcesFromAnBody(term as SemanticAnBody)
+  : [];
+}
+
 // }}}3
 
 export type AnBody = SemanticAnBody | KeywordAnBody | CommentAnBody | TripleAnBody;
@@ -242,6 +270,7 @@ export function getAnBodyType(anBody: AnBody): AnBodyType {
     : isKeywordAnBody(anBody) ? AnBodyType.KEYWORD
     : isCommentAnBody(anBody) ? AnBodyType.COMMENT
     : isTripleAnBody(anBody) ? AnBodyType.TRIPLE
+    : isTripleTerm(anBody) ? AnBodyType.TRIPLE_TERM
     : AnBodyType.UNKNOWN
   );
 }
@@ -252,6 +281,7 @@ export function getLabelFromBody(anBody: AnBody): string {
     [AnBodyType.KEYWORD]: () => getLabelOfKeywordBody(anBody as KeywordAnBody),
     [AnBodyType.COMMENT]: () => getLabelOfCommentBody(anBody as CommentAnBody),
     [AnBodyType.TRIPLE]: () => getLabelOfTripleBody(anBody as TripleAnBody),
+    [AnBodyType.TRIPLE_TERM]: () => getLabelOfTripleTerm(anBody as TripleTerm),
     [AnBodyType.UNKNOWN]: () => "Unknown annotation type"
   });
 }
@@ -389,10 +419,10 @@ export function isMine(annotation: Annotation, userPID: PID|null): boolean {
   return userPID !== null && utils.extractId(annotation.creator.id) === utils.extractId(userPID);
 }
 
-export function getSources(annotation: Annotation): Array<string> {
-  if (isSemanticAnBody(annotation.body)) {
-    const anBody = annotation.body as SemanticAnBody;
-    const specificItems = anBody.items.filter(isAnBodyItemSpecificResource) as Array<AnBodyItemSpecificResource>;
+export function getSourcesFromAnBody(body: AnBody): Array<string> {
+  if (isSemanticAnBody(body)) {
+    const semBody = body as SemanticAnBody;
+    const specificItems = semBody.items.filter(isAnBodyItemSpecificResource) as Array<AnBodyItemSpecificResource>;
     return specificItems.map(i => i.source);
   } else {
     return [];
