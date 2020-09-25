@@ -50,7 +50,6 @@ function body2ttl(an: Annotation): Turtle[] {
       [AnBodyType.KEYWORD]: () => mkKeywordAnBody(value),
       [AnBodyType.COMMENT]: () => mkCommentAnBody(value),
       [AnBodyType.TRIPLE]: () => mkTripleAnBody(an.body as TripleAnBody),
-      [AnBodyType.TRIPLE_TERM]: () => [],
       [AnBodyType.UNKNOWN]: () => []
     });
   }

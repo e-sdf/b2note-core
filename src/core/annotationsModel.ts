@@ -72,7 +72,6 @@ export enum AnBodyType {
   KEYWORD = "keyword",
   COMMENT = "comment",
   TRIPLE = "triple",
-  TRIPLE_TERM = "tripleTerm",
   UNKNOWN = "unknown"
 }
 
@@ -89,18 +88,18 @@ export interface SemanticAnBody {
   purpose?: PurposeType.TAGGING;
 }
 
-export function mkSemanticAnBody(sources: Array<string>, value: string, hasPurpose = true): SemanticAnBody {
+export function mkSemanticAnBody(sources: Array<string>, value: string): SemanticAnBody {
   const specificItems = sources.map(source => mkAnBodyItemSpecificResource(source));
   const textualItem = mkAnBodyItemTextual(value);
   return {
     type: AnBodyItemType.COMPOSITE,
     items: [...specificItems, textualItem],
-    ...hasPurpose ? { purpose: PurposeType.TAGGING } : {}
+    purpose: PurposeType.TAGGING
   };
 }
 
 export function isSemanticAnBody(body: AnBody): boolean {
-  return body.type === AnBodyItemType.COMPOSITE && !isTripleTerm(body);
+  return body.type === AnBodyItemType.COMPOSITE;
 }
 
 export function getLabelOfSemanticBody(body: SemanticAnBody): string {
@@ -125,11 +124,11 @@ export interface KeywordAnBody {
   purpose?: PurposeType.TAGGING
 }
 
-export function mkKeywordAnBody(value: string, hasPurpose = true): KeywordAnBody {
+export function mkKeywordAnBody(value: string): KeywordAnBody {
   return {
     type: AnBodyItemType.TEXTUAL_BODY,
     value,
-    ...hasPurpose ? { purpose: PurposeType.TAGGING } : {}
+    purpose: PurposeType.TAGGING
   };
 }
 
@@ -170,11 +169,19 @@ export function getLabelOfCommentBody(body: CommentAnBody): string {
 
 export enum TripleTermType {
   SEMANTIC = "semantic",
-  KEYWORD = "keyword"
+  KEYWORD = "keyword",
+  UNKNOWN = "unknown"
 }
 
-export type SemanticTripleTerm = SemanticAnBody;
-export type KeywordTripleTerm = KeywordAnBody;
+export interface SemanticTripleTerm {
+  type: AnBodyItemType.COMPOSITE;
+  items: Array<AnBodyItem>;
+}
+
+export interface KeywordTripleTerm {
+  type: AnBodyItemType.TEXTUAL_BODY;
+  value: string;
+}
 
 export type TripleTerm = SemanticTripleTerm | KeywordTripleTerm;
 
@@ -182,16 +189,20 @@ export function getLabelOfTripleTerm(term: TripleTerm): string {
   return getLabelFromBody(term);
 }
 
-export function isTripleTerm(term: TripleTerm|AnBody): boolean {
-  return term.purpose == null;
+export function isSemanticTripleTerm(term: TripleTerm): boolean {
+  return term.type === AnBodyItemType.COMPOSITE;
 }
 
-export function isSemanticTripleTerm(term: TripleTerm|AnBody): boolean {
-  return term.type === AnBodyItemType.COMPOSITE && term.purpose == null;
+export function isKeywordTripleTerm(term: TripleTerm): boolean {
+  return term.type === AnBodyItemType.TEXTUAL_BODY;
 }
 
-export function isKeywordTripleTerm(term: TripleTerm|AnBody): boolean {
-  return term.type === AnBodyItemType.TEXTUAL_BODY && term.purpose == null;
+export function getTripleTermType(term: TripleTerm): TripleTermType {
+  return (
+    isSemanticTripleTerm(term) ? TripleTermType.SEMANTIC
+    : isKeywordTripleTerm(term) ? TripleTermType.KEYWORD
+    : TripleTermType.UNKNOWN
+  );
 }
 
 // }}}4
@@ -207,11 +218,19 @@ export function mkTriple(subject: TripleTerm, predicate: TripleTerm, object: Tri
 }
 
 export function mkSemanticTripleTerm(sources: Array<string>, value: string): SemanticTripleTerm {
-  return mkSemanticAnBody(sources, value, false);
+  const specificItems = sources.map(source => mkAnBodyItemSpecificResource(source));
+  const textualItem = mkAnBodyItemTextual(value);
+  return {
+    type: AnBodyItemType.COMPOSITE,
+    items: [...specificItems, textualItem],
+  };
 }
 
 export function mkKeywordTripleTerm(value: string): KeywordTripleTerm {
-  return mkKeywordAnBody(value, false);
+  return {
+    type: AnBodyItemType.TEXTUAL_BODY,
+    value
+  };
 }
 
 export interface TripleAnBody {
@@ -219,8 +238,6 @@ export interface TripleAnBody {
   value: Triple;
   purpose: PurposeType.TAGGING;
 }
-
-
 
 export function mkTripleAnBody(triple: Triple): TripleAnBody {
   return {
@@ -230,13 +247,6 @@ export function mkTripleAnBody(triple: Triple): TripleAnBody {
   };
 }
 
-export function getTripleTermType(tripleTerm: TripleTerm): TripleTermType {
-  return matchSwitch(tripleTerm.type, {
-    [AnBodyItemType.COMPOSITE]: () => TripleTermType.SEMANTIC,
-    [AnBodyItemType.TEXTUAL_BODY]: () => TripleTermType.KEYWORD
-  });
-}
-
 export function isTripleAnBody(body: AnBody): boolean {
   return body.type === AnBodyItemType.SPECIFIC_RESOURCE;
 }
@@ -244,7 +254,8 @@ export function isTripleAnBody(body: AnBody): boolean {
 export function getTripleTermLabel(tripleTerm: TripleTerm): string {
   return matchSwitch(getTripleTermType(tripleTerm), {
     [TripleTermType.SEMANTIC]: () => getLabelOfSemanticBody(tripleTerm as SemanticAnBody),
-    [TripleTermType.KEYWORD]: () => getLabelOfKeywordBody(tripleTerm as KeywordAnBody)
+    [TripleTermType.KEYWORD]: () => getLabelOfKeywordBody(tripleTerm as KeywordAnBody),
+    [TripleTermType.UNKNOWN]: () => "unknown triple type"
   });
 }
 
@@ -270,7 +281,6 @@ export function getAnBodyType(anBody: AnBody): AnBodyType {
     : isKeywordAnBody(anBody) ? AnBodyType.KEYWORD
     : isCommentAnBody(anBody) ? AnBodyType.COMMENT
     : isTripleAnBody(anBody) ? AnBodyType.TRIPLE
-    : isTripleTerm(anBody) ? AnBodyType.TRIPLE_TERM
     : AnBodyType.UNKNOWN
   );
 }
@@ -281,7 +291,6 @@ export function getLabelFromBody(anBody: AnBody): string {
     [AnBodyType.KEYWORD]: () => getLabelOfKeywordBody(anBody as KeywordAnBody),
     [AnBodyType.COMMENT]: () => getLabelOfCommentBody(anBody as CommentAnBody),
     [AnBodyType.TRIPLE]: () => getLabelOfTripleBody(anBody as TripleAnBody),
-    [AnBodyType.TRIPLE_TERM]: () => getLabelOfTripleTerm(anBody as TripleTerm),
     [AnBodyType.UNKNOWN]: () => "Unknown annotation type"
   });
 }

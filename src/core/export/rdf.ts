@@ -160,7 +160,6 @@ function mkBody(an: Annotation): [string, Record<string, any>, any[]] {
     [AnBodyType.KEYWORD]: () => [ ...mkKeywordAnBody(value), [] ] as [string, Record<string, any>, any[]],
     [AnBodyType.COMMENT]: () => [ ...mkCommentAnBody(value), [] ] as [string, Record<string, any>, any[]],
     [AnBodyType.TRIPLE]: () => [ ...mkTripleAnBody(an.body as TripleAnBody), [] ] as [string, Record<string, any>, any[]],
-    [AnBodyType.TRIPLE_TERM]: () => ["unknown", {}, []],
     [AnBodyType.UNKNOWN]: () => ["unknown", {}, []]
   });
 }
