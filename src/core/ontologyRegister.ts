@@ -17,6 +17,8 @@ export enum OntologyFormat {
 }
 
 export interface Ontology {
+  id: string;
+  creatorId: string;
   uri: string;
   terms: Array<OntologyTerm>;
 }
