@@ -2,6 +2,8 @@ import _ from "lodash";
 import axios from "axios";
 import { axiosErrToMsg } from "./utils";
 
+export const ontologyRegisterUrl = "/ontology-register";
+
 export enum OntologyFormat {
   TURTLE = "Turtle",
   N_TRIPLES = "N-Triples",
