@@ -23,6 +23,10 @@ export interface Ontology {
   terms: Array<OntologyTerm>;
 }
 
+export function isEqual(o1: Ontology, o2: Ontology): boolean {
+  return _.isEqual(o1.terms, o2.terms);
+}
+
 export interface OntologyTerm {
   labels: string;
   descriptions: Array<string>;
