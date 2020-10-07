@@ -2,7 +2,9 @@ import _ from "lodash";
 import axios from "axios";
 import { axiosErrToMsg } from "./utils";
 
-export const ontologyRegisterUrl = "/ontology-register";
+const ontologyRegisterUrl = "/ontology-register";
+export const ontologiesUrl = ontologyRegisterUrl + "/ontologies";
+export const termsUrl = ontologyRegisterUrl + "/terms";
 
 export enum OntologyFormat {
   TURTLE = "Turtle",
