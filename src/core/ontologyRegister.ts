@@ -1,6 +1,4 @@
 import _ from "lodash";
-import axios from "axios";
-import { axiosErrToMsg } from "./utils";
 
 export enum OntologyFormat {
   TURTLE = "Turtle",
@@ -83,42 +81,4 @@ function resultToDict(docs: any): OTermsDict {
   const ontologiesUniq = _.uniqBy(ontologies, "uris");
   const groups = _.groupBy(ontologiesUniq, o => o.labels.toLowerCase());
   return groups;
-}
-
-export async function getOTerms(solrUrl: string, query: string): Promise<OTermsDict> {
-  return new Promise((resolve, reject) => {
-    axios.get(mkSolrQueryUrl(solrUrl, query)).then(
-      resp => resolve(resultToDict(resp.data?.response?.docs)),
-      err => reject(axiosErrToMsg(err))
-    ).catch(err => reject(axiosErrToMsg(err)));
-  });
-}
-
-export async function getOTerm(solrUrl: string, tag: string): Promise<OTermsDict> {
-  return new Promise((resolve, reject) => {
-    axios.get(mkSolrExactQueryUrl(solrUrl, tag)).then(
-      resp => resolve(resultToDict(resp.data?.response?.docs)),
-      err => reject(axiosErrToMsg(err))
-    ).catch(err => reject(axiosErrToMsg(err)));
-  });
-}
-
-// Getting ontology info {{{1
-
-export function getInfo(solrUrl: string, ontologyUri: string): Promise<OntologyTerm> {
-  return new Promise((resolve, reject) => {
-    const queryUrl = encodeSolrQuery(solrUrl + '?q=uris:("' + ontologyUri + '")&rows=100&wt=json');
-    axios.get(queryUrl).then(
-      res => {
-        if (res?.data?.response?.docs?.length > 0) {
-          const info = resultToDict(res.data.response.docs);
-          const key = Object.keys(info)[0];
-          resolve(info[key][0]);
-        } else {
-          reject("SOLR query returned 0 results for " + queryUrl);
-        }
-      },
-      error => reject(axiosErrToMsg(error))
-    ).catch(error => reject(axiosErrToMsg(error)));
-  });
 }
