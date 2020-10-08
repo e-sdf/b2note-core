@@ -1,5 +1,9 @@
 import _ from "lodash";
 
+const ontologyRegisterUrl = "/ontology-register";
+export const ontologiesUrl = ontologyRegisterUrl + "/ontologies";
+export const termsUrl = ontologyRegisterUrl + "/terms";
+
 export enum OntologyFormat {
   TURTLE = "Turtle",
   N_TRIPLES = "N-Triples",
@@ -13,8 +17,14 @@ export enum OntologyFormat {
 }
 
 export interface Ontology {
+  id: string;
+  creatorId: string;
   uri: string;
   terms: Array<OntologyTerm>;
+}
+
+export function isEqual(o1: Ontology, o2: Ontology): boolean {
+  return _.isEqual(o1.terms, o2.terms);
 }
 
 export interface OntologyTerm {
