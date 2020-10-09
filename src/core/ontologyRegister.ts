@@ -29,7 +29,7 @@ export function isEqual(o1: Ontology, o2: Ontology): boolean {
 
 export interface OntologyTerm {
   labels: string;
-  descriptions: Array<string>;
+  description: string;
   shortForm: string;
   ontologyName: string;
   ontologyAcronym: string;
@@ -40,7 +40,7 @@ export interface OntologyTerm {
 export function mkOntologyTerm(uri: string, label: string): OntologyTerm {
   return {
     labels: label,
-    descriptions: [],
+    description: "",
     shortForm: "",
     ontologyName: "",
     ontologyAcronym: "",
