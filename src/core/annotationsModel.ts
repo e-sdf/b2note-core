@@ -186,7 +186,11 @@ export interface KeywordTripleTerm {
 export type TripleTerm = SemanticTripleTerm | KeywordTripleTerm;
 
 export function getLabelOfTripleTerm(term: TripleTerm): string {
-  return getLabelFromBody(term);
+  return matchSwitch(getTripleTermType(term), {
+    [TripleTermType.SEMANTIC]: () => getLabelOfSemanticBody(term as SemanticAnBody),
+    [TripleTermType.KEYWORD]: () => getLabelOfKeywordBody(term as KeywordAnBody),
+    [TripleTermType.UNKNOWN]: () => "Unknown annotation type"
+  });
 }
 
 export function isSemanticTripleTerm(term: TripleTerm): boolean {
