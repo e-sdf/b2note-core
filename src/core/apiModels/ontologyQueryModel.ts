@@ -13,5 +13,5 @@ export const defaultOntologySources: OntologySources = {
 export interface OntologyQuery {
   value?: string;
   uri?: string;
-  sources?: OntologySources;
+  "sources-ids"?: Array<string>
 }
