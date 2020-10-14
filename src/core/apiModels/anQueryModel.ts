@@ -1,5 +1,5 @@
-import * as an from "./annotationsModel";
-import * as formats from "./formats";
+import * as an from "../annotationsModel";
+import * as formats from "../formats";
 
 export interface GetAnQuery {
   type?: Array<an.AnBodyType>;

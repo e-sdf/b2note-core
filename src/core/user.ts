@@ -1,6 +1,6 @@
 export const usersUrl = "/users";
 export const profileUrl = usersUrl + "/profile";
-export const customOntologyUrl = usersUrl + "/custom-ontology";
+export const customOntologyUrl = usersUrl + "/ontology";
 
 export enum Experience {
   NULL = "",
