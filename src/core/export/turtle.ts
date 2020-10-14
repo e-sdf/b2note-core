@@ -94,7 +94,7 @@ function mkCommenting(): Turtle[] {
 
 function an2ttl(an: Annotation, serverUrl: string): Turtle[] {
   return [
-    `<${serverUrl + annotationsUrl + "/" + an.id}>`,
+    `<${an.id}>`,
     `  a oa:Annotation ;`,
     ...body2ttl(an),
     `  dcterms:created "${an.created}"^^xsd:dateTime ;`,
