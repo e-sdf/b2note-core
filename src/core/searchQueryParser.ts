@@ -39,7 +39,7 @@ value
   / '"' val:[^"]+ '"' { return val.join(""); }
 
 regex
-  = val:[a-zA-Z0-9 \^$*+?.()]+ { return val.join(""); }
+  = val:[a-zA-Z0-9_ \^$*+?.()]+ { return val.join(""); }
 
 white
   = [  ]*
