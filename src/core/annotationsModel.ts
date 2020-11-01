@@ -309,13 +309,15 @@ export interface TextPositionSelector {
 
 export interface XPathSelector {
   type: "XPathSelector";
+  selection: string;
   value: string;
   refinedBy?: TextPositionSelector;
 }
 
-export function mkTargetSelector(xpath: string, startOffset: number, endOffset: number): XPathSelector {
+export function mkTargetSelector(selection: string, xpath: string, startOffset: number, endOffset: number): XPathSelector {
   return {
     type: "XPathSelector",
+    selection,
     value: xpath,
     refinedBy: {
       type: "TextPositionSelector",
