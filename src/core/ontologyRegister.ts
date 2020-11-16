@@ -16,10 +16,13 @@ export enum OntologyFormat {
   TRIX = "TriX"
 }
 
-export interface Ontology {
+export interface OntologyInfo {
   id: string;
   creatorId: string;
   uri: string;
+}
+
+export interface Ontology extends OntologyInfo {
   terms: Array<OntologyTerm>;
 }
 
