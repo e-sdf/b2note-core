@@ -20,6 +20,7 @@ export interface OntologyMeta {
   id: string;
   creatorId: string;
   uri: string;
+  noOfTerms: number;
 }
 
 export interface Ontology extends OntologyMeta {
