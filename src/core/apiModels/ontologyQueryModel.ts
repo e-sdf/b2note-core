@@ -1,8 +1,8 @@
-import type { Ontology } from "../ontologyRegister";
+import type { OntologyMeta } from "../ontologyRegister";
 
 export interface OntologySources {
   solr: boolean;
-  custom: Array<Ontology>;
+  custom: Array<OntologyMeta>;
 }
 
 export const defaultOntologySources: OntologySources = {
