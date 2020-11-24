@@ -301,6 +301,8 @@ export function getLabelFromBody(anBody: AnBody): string {
 
 // Target {{{2
 
+// Text selection {{{3
+
 export interface TextPositionSelector {
   type: "TextPositionSelector";
   start: number;
@@ -309,15 +311,15 @@ export interface TextPositionSelector {
 
 export interface XPathSelector {
   type: "XPathSelector";
-  selection: string;
+  selectedText: string;
   value: string;
   refinedBy?: TextPositionSelector;
 }
 
-export function mkTargetSelector(selection: string, xpath: string, startOffset: number, endOffset: number): XPathSelector {
+export function mkTextSelector(selectedText: string, xpath: string, startOffset: number, endOffset: number): XPathSelector {
   return {
     type: "XPathSelector",
-    selection,
+    selectedText,
     value: xpath,
     refinedBy: {
       type: "TextPositionSelector",
@@ -327,10 +329,28 @@ export function mkTargetSelector(selection: string, xpath: string, startOffset: 
   };
 }
 
+// SVG selection {{{3
+
+export interface SvgSelector {
+  type: "SvgSelector";
+  value: string;
+}
+
+export function mkSvgSelector(svg: string): SvgSelector {
+  return {
+    type: "SvgSelector",
+    value: svg
+  };
+}
+
+// }}}3
+
+export type Selector = XPathSelector | SvgSelector;
+
 export interface AnTarget {
   id: ID;
   source?: string;
-  selector?: XPathSelector;
+  selector?: Selector;
   type: string;
 }
 
