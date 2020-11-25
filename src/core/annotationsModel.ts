@@ -349,7 +349,9 @@ export type Selector = XPathSelector | SvgSelector;
 
 export interface AnTarget {
   id: ID;
+  idName?: string;
   source?: string;
+  sourceName?: string;
   selector?: Selector;
   type: string;
 }
