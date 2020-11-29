@@ -41,10 +41,10 @@ export interface OntologyTerm {
   uris: string;
 }
 
-export function mkOntologyTerm(uri: string, label: string): OntologyTerm {
+export function mkOntologyTerm(uri: string, label: string, description = ""): OntologyTerm {
   return {
     label: label,
-    description: "",
+    description,
     shortForm: "",
     ontologyName: "",
     ontologyAcronym: "",
