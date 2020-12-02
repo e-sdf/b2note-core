@@ -18,6 +18,7 @@ export enum OntologyFormat {
 
 export interface OntologyMeta {
   id: string;
+  name?: string;
   creatorId: string;
   uri: string;
   noOfTerms: number;

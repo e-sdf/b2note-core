@@ -10,8 +10,13 @@ export const defaultOntologySources: OntologySources = {
   custom: []
 };
 
-export interface OntologyQuery {
+export interface OntologyGetQuery {
   value?: string;
   uri?: string;
   "sources-ids"?: Array<string>
+}
+
+export interface OntologyPatchQuery {
+  id: string;
+  name: string;
 }
