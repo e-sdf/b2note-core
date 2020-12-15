@@ -343,9 +343,62 @@ export function mkSvgSelector(svg: string): SvgSelector {
   };
 }
 
+// Table Selector {{{3
+
+export interface RowAddress {
+  row: number;
+}
+
+export interface ColumnAddress {
+  row: number;
+}
+
+export interface CellAddress extends ColumnAddress, RowAddress {}
+
+type TableRange = {
+  start: RowAddress;
+  end: RowAddress;
+} | {
+  start: ColumnAddress;
+  end: ColumnAddress;
+} | {
+  start: CellAddress;
+  end: CellAddress;
+}
+
+export interface TableSelector {
+  type: "TableSelector";
+  sheet: string;
+  range?: TableRange;
+}
+
+export function mkTableSelector(sheet: string, range?: TableRange): TableSelector {
+  return {
+    type: "TableSelector",
+    sheet,
+    range
+  };
+}
+
+// PDF Selector {{{3
+
+export interface PdfSelector {
+  type: "PdfSelector";
+  pageNumber: number;
+  selection?: SvgSelector;
+}
+
+export function mkPdfSelector(pageNumber: number, selection?: SvgSelector): PdfSelector {
+  return {
+    type: "PdfSelector",
+    pageNumber,
+    selection
+  };
+}
+
 // }}}3
 
-export type Selector = XPathSelector | SvgSelector;
+export type Selector = XPathSelector | SvgSelector | TableSelector | PdfSelector
 
 export interface AnTarget {
   id: ID;
