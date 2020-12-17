@@ -405,7 +405,7 @@ export interface TextSelectorParam {
   xPath: string;
   startOffset: number;
   endOffset: number;
-  selection: string;
+  selectedText: string;
 }
 
 export type SvgSelectorParam = SvgSelector
