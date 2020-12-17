@@ -309,14 +309,14 @@ export interface TextPositionSelector {
   end: number;
 }
 
-export interface XPathSelector {
+export interface XPathTextSelector {
   type: "XPathSelector";
   selectedText: string;
   value: string;
   refinedBy?: TextPositionSelector;
 }
 
-export function mkTextSelector(selectedText: string, xpath: string, startOffset: number, endOffset: number): XPathSelector {
+export function mkXPathTextSelector(selectedText: string, xpath: string, startOffset: number, endOffset: number): XPathTextSelector {
   return {
     type: "XPathSelector",
     selectedText,
@@ -398,22 +398,42 @@ export function mkPdfSelector(pageNumber: number, selection?: SvgSelector): PdfS
 
 // }}}3
 
-export type Selector = XPathSelector | SvgSelector | TableSelector | PdfSelector
+// Target structure for passing params from services {{{3
 
-export interface Target {
+export interface TextSelectorParam {
+  type: "TextSelector";
+  xPath: string;
+  startOffset: number;
+  endOffset: number;
+  selection: string;
+}
+
+export type SvgSelectorParam = SvgSelector
+
+export type TableSelectorParam = TableSelector
+
+export type PdfSelectorParam = PdfSelector
+
+export type SelectorParam = TextSelectorParam | SvgSelectorParam | TableSelectorParam | PdfSelectorParam
+
+export interface TargetParam {
   pid: string;
   pidName?: string;
   source?: string;
   sourceName?: string;
-  selector?: Selector;
+  selector?: SelectorParam;
 }
+
+// Target for the annotation model {{{3
+
+export type AnSelector = XPathTextSelector | SvgSelector | TableSelector | PdfSelector
 
 export interface AnTarget {
   id: ID;
   idName?: string;
   source?: string;
   sourceName?: string;
-  selector?: Selector;
+  selector?: AnSelector;
   type: string;
 }
 
