@@ -400,6 +400,14 @@ export function mkPdfSelector(pageNumber: number, selection?: SvgSelector): PdfS
 
 export type Selector = XPathSelector | SvgSelector | TableSelector | PdfSelector
 
+export interface Target {
+  pid: string;
+  pidName?: string;
+  source?: string;
+  sourceName?: string;
+  selector?: Selector;
+}
+
 export interface AnTarget {
   id: ID;
   idName?: string;
