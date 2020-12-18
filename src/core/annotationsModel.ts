@@ -355,13 +355,16 @@ export interface ColumnAddress {
 
 export interface CellAddress extends ColumnAddress, RowAddress {}
 
-type TableRange = {
+export type TableRange = {
+  type: "RowRange";
   start: RowAddress;
   end: RowAddress;
 } | {
+  type: "ColumnRange";
   start: ColumnAddress;
   end: ColumnAddress;
 } | {
+  type: "CellRange";
   start: CellAddress;
   end: CellAddress;
 }
@@ -385,46 +388,18 @@ export function mkTableSelector(sheet: string, range?: TableRange): TableSelecto
 export interface PdfSelector {
   type: "PdfSelector";
   pageNumber: number;
-  selection?: SvgSelector;
+  selector?: SvgSelector;
 }
 
-export function mkPdfSelector(pageNumber: number, selection?: SvgSelector): PdfSelector {
+export function mkPdfSelector(pageNumber: number, selector?: SvgSelector): PdfSelector {
   return {
     type: "PdfSelector",
     pageNumber,
-    selection
+    selector
   };
 }
 
-// }}}3
-
-// Target structure for passing params from services {{{3
-
-export interface TextSelectorParam {
-  type: "TextSelector";
-  xPath: string;
-  startOffset: number;
-  endOffset: number;
-  selectedText: string;
-}
-
-export type SvgSelectorParam = SvgSelector
-
-export type TableSelectorParam = TableSelector
-
-export type PdfSelectorParam = PdfSelector
-
-export type SelectorParam = TextSelectorParam | SvgSelectorParam | TableSelectorParam | PdfSelectorParam
-
-export interface TargetParam {
-  pid: string;
-  pidName?: string;
-  source?: string;
-  sourceName?: string;
-  selector?: SelectorParam;
-}
-
-// Target for the annotation model {{{3
+// Target {{{3
 
 export type AnSelector = XPathTextSelector | SvgSelector | TableSelector | PdfSelector
 
