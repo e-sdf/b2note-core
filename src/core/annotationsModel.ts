@@ -345,29 +345,27 @@ export function mkSvgSelector(svg: string): SvgSelector {
 
 // Table Selector {{{3
 
-export interface RowAddress {
-  row: number;
-}
-
-export interface ColumnAddress {
-  row: number;
-}
-
-export interface CellAddress extends ColumnAddress, RowAddress {}
-
-export type TableRange = {
+export interface RowRange {
   type: "RowRange";
-  start: RowAddress;
-  end: RowAddress;
-} | {
-  type: "ColumnRange";
-  start: ColumnAddress;
-  end: ColumnAddress;
-} | {
-  type: "CellRange";
-  start: CellAddress;
-  end: CellAddress;
+  startRow: number;
+  endRow: number;
 }
+
+export interface ColumnRange {
+  type: "ColumnRange";
+  startColumn: number;
+  endColumn: number;
+}
+
+export interface CellRange {
+  type: "CellRange";
+  startColumn: number;
+  endColumn: number;
+  startRow: number;
+  endRow: number;
+}
+
+export type TableRange = RowRange|ColumnRange|CellRange
 
 export interface TableSelector {
   type: "TableSelector";

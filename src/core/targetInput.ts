@@ -57,7 +57,7 @@ export interface TableTargetInput extends PidInput {
 export interface PdfTargetInput extends PidInput {
   type: TargetType.PDF;
   pageNumber: number;
-  selector?: string;
+  svgSelector?: string;
 }
 
 export type TargetInput = 
@@ -131,7 +131,7 @@ export function mkTarget(targetInput: TargetInput): AnTarget {
     }),
     [TargetType.PDF]: () => ({
       ...mkPidPart(pageForm),
-      ...mkPdfSelector(pdfForm.pageNumber, pdfForm.selector ? mkSvgSelector(pdfForm.selector) : undefined),
+      ...mkPdfSelector(pdfForm.pageNumber, pdfForm.svgSelector ? mkSvgSelector(pdfForm.svgSelector) : undefined),
       ...mkTypePart()
     })
   });
