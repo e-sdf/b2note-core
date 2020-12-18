@@ -2,7 +2,6 @@
 
 import _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
-
 import * as utils from "./utils";
 
 // Annotation {{{1
@@ -345,20 +344,26 @@ export function mkSvgSelector(svg: string): SvgSelector {
 
 // Table Selector {{{3
 
+export enum TableRangeType {
+  ROWS = "RowRange",
+  COLUMNS = "ColumnRange",
+  CELLS = "CellRange"
+}
+
 export interface RowRange {
-  type: "RowRange";
+  type: TableRangeType.ROWS;
   startRow: number;
   endRow: number;
 }
 
 export interface ColumnRange {
-  type: "ColumnRange";
+  type: TableRangeType.COLUMNS;
   startColumn: number;
   endColumn: number;
 }
 
 export interface CellRange {
-  type: "CellRange";
+  type: TableRangeType.CELLS;
   startColumn: number;
   endColumn: number;
   startRow: number;
@@ -366,6 +371,23 @@ export interface CellRange {
 }
 
 export type TableRange = RowRange|ColumnRange|CellRange
+
+export function printTableRange(tr: TableRange): string {
+  return matchSwitch(tr.type, {
+    [TableRangeType.ROWS]: () => {
+      const r = tr as RowRange;
+      return `Rows ${r.startRow}-${r.endRow}`;
+    }, 
+    [TableRangeType.COLUMNS]: () => {
+      const r = tr as ColumnRange;
+      return `Columns ${r.startColumn}-${r.endColumn}`;
+    },
+    [TableRangeType.CELLS]: () => {
+      const r = tr as CellRange;
+      return `[${r.startColumn}:${r.startRow}]-[${r.endColumn}:${r.endRow}]`;
+    }
+  });
+}
 
 export interface TableSelector {
   type: "TableSelector";
