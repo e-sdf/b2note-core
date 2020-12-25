@@ -1,8 +1,8 @@
-import type { Domain } from "../domainModel";
+export interface DomainPostQuery {
+  name: string;
+}
 
-export type DomainGetQuery = Partial<Domain>
-
-export type DomainPatchQuery = {
+export interface DomainPatchQuery {
   id: string;
   name: string;
 }
