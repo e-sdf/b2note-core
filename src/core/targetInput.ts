@@ -2,7 +2,7 @@ import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { TableRange, AnTarget } from "./annotationsModel";
 import { AnBodyItemType, mkPdfSelector, mkXPathTextSelector, mkSvgSelector, mkTableSelector } from "./annotationsModel";
 
-export enum TargetType {
+export enum TargetInputType {
   PAGE = "PageTarget",
   LINK = "LinkTarget",
   TEXT_SELECTION = "TextSelectionTarget",
@@ -23,15 +23,15 @@ interface SourceInput {
 }
 
 export interface PageTargetInput extends PidInput {
-  type: TargetType.PAGE;
+  type: TargetInputType.PAGE;
 }
 
 export interface LinkTargetInput extends PidInput, SourceInput {
-  type: TargetType.LINK;
+  type: TargetInputType.LINK;
 }
 
 export interface TextSelectionTargetInput extends PidInput {
-  type: TargetType.TEXT_SELECTION;
+  type: TargetInputType.TEXT_SELECTION;
   xPath: string;
   startOffset: number;
   endOffset: number;
@@ -39,23 +39,23 @@ export interface TextSelectionTargetInput extends PidInput {
 }
 
 export interface ImageRegionTargetInput extends PidInput {
-  type: TargetType.IMAGE_REGION;
+  type: TargetInputType.IMAGE_REGION;
   svgSelector: string; // SVG specifying a region of image
 }
 
 export interface ImageRegionOnPageTargetInput extends PidInput, SourceInput {
-  type: TargetType.IMAGE_REGION_ON_PAGE;
+  type: TargetInputType.IMAGE_REGION_ON_PAGE;
   svgSelector: string; // SVG specifying a region of image
 }
 
 export interface TableTargetInput extends PidInput {
-  type: TargetType.TABLE;
+  type: TargetInputType.TABLE;
   sheet: string;
   range?: TableRange;
 }
 
 export interface PdfTargetInput extends PidInput {
-  type: TargetType.PDF;
+  type: TargetInputType.PDF;
   pageNumber: number;
   svgSelector?: string;
 }
@@ -69,6 +69,17 @@ export type TargetInput =
 | TableTargetInput
 | PdfTargetInput
 
+export function printTargetInputType(targetInput: TargetInput): string {
+  return matchSwitch(targetInput.type, {
+    [TargetInputType.PAGE]: () => "Whole page",
+    [TargetInputType.LINK]: () => "Resource on page",
+    [TargetInputType.TEXT_SELECTION]: () => "Text selection on page",
+    [TargetInputType.IMAGE_REGION]: () => "Image",
+    [TargetInputType.IMAGE_REGION_ON_PAGE]: () => "Image on page",
+    [TargetInputType.TABLE]: () => "Table",
+    [TargetInputType.PDF]: () => "PDF document"
+  });
+}
 
 function mkTypePart(): {type: AnBodyItemType } {
   return {
@@ -99,37 +110,37 @@ export function mkTarget(targetInput: TargetInput): AnTarget {
   const pdfForm = targetInput as PdfTargetInput;
   
   return matchSwitch(targetInput.type, {
-    [TargetType.PAGE]: () => ({
+    [TargetInputType.PAGE]: () => ({
       ...mkPidPart(pageForm),
       ...mkTypePart() 
     }),
-    [TargetType.LINK]: () => ({
+    [TargetInputType.LINK]: () => ({
       ...mkPidPart(pageForm),
       ...mkSourcePart(linkForm),
       ...mkTypePart()
     }),
-    [TargetType.TEXT_SELECTION]: () => ({
+    [TargetInputType.TEXT_SELECTION]: () => ({
       ...mkPidPart(pageForm),
       selector: mkXPathTextSelector(tsForm.selectedText, tsForm.xPath, tsForm.startOffset, tsForm.endOffset),
       ...mkTypePart()
     }),
-    [TargetType.IMAGE_REGION]: () => ({
+    [TargetInputType.IMAGE_REGION]: () => ({
       ...mkPidPart(pageForm),
       selector: mkSvgSelector(imgForm.svgSelector),
       ...mkTypePart()
     }),
-    [TargetType.IMAGE_REGION_ON_PAGE]: () => ({
+    [TargetInputType.IMAGE_REGION_ON_PAGE]: () => ({
       ...mkPidPart(pageForm),
       ...mkSourcePart(linkForm),
       selector: mkSvgSelector(imgForm.svgSelector),
       ...mkTypePart()
     }),
-    [TargetType.TABLE]: () => ({
+    [TargetInputType.TABLE]: () => ({
       ...mkPidPart(pageForm),
       selector: mkTableSelector(tableForm.sheet, tableForm.range),
       ...mkTypePart()
     }),
-    [TargetType.PDF]: () => ({
+    [TargetInputType.PDF]: () => ({
       ...mkPidPart(pageForm),
       ...mkPdfSelector(pdfForm.pageNumber, pdfForm.svgSelector ? mkSvgSelector(pdfForm.svgSelector) : undefined),
       ...mkTypePart()
