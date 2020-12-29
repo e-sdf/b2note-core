@@ -1,4 +1,5 @@
 import type { OntologyMeta } from "../ontologyRegister";
+import type { Domain } from "../domainModel";
 
 export interface OntologySources {
   solr: boolean;
@@ -18,5 +19,6 @@ export interface OntologyGetQuery {
 
 export interface OntologyPatchQuery {
   id: string;
-  name: string;
+  name?: string;
+  domains?: Array<Domain>;
 }
