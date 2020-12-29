@@ -1,4 +1,5 @@
 import _ from "lodash";
+import type { Domain } from "./domainModel";
 
 const ontologyRegisterUrl = "/ontology-register";
 export const ontologiesUrl = ontologyRegisterUrl + "/ontologies";
@@ -22,6 +23,7 @@ export interface OntologyMeta {
   creatorId: string;
   uri: string;
   noOfTerms: number;
+  domainsIds?: Array<string>;
 }
 
 export interface Ontology extends OntologyMeta {
