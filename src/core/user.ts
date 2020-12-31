@@ -20,6 +20,7 @@ export interface UserProfile {
   jobTitle: string;
   country: string;
   experience: Experience;
+  domains?: Array<string>;
 }
 
 export type UserProfilePartial = Partial<UserProfile>;
