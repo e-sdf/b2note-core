@@ -23,7 +23,7 @@ export interface OntologyMeta {
   creatorId: string;
   uri: string;
   noOfTerms: number;
-  domains?: Array<Domain>;
+  domainsIds?: Array<string>;
 }
 
 export interface Ontology extends OntologyMeta {
