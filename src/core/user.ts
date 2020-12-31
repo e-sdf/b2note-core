@@ -19,8 +19,8 @@ export interface UserProfile {
   organisation: string;
   jobTitle: string;
   country: string;
+  domainsIds?: Array<string>;
   experience: Experience;
-  domains?: Array<string>;
 }
 
 export type UserProfilePartial = Partial<UserProfile>;
