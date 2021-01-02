@@ -60,7 +60,7 @@ export interface PdfTargetInput extends PidInput {
   svgSelector?: string;
 }
 
-export type TargetInput = 
+export type TargetInput =
   PageTargetInput
 | LinkTargetInput
 | TextSelectionTargetInput
@@ -74,8 +74,8 @@ export function printTargetInputType(targetInput: TargetInput): string {
     [TargetInputType.PAGE]: () => "Whole page",
     [TargetInputType.LINK]: () => "Resource on page",
     [TargetInputType.TEXT_SELECTION]: () => "Text selection on page",
-    [TargetInputType.IMAGE_REGION]: () => "Image",
-    [TargetInputType.IMAGE_REGION_ON_PAGE]: () => "Image on page",
+    [TargetInputType.IMAGE_REGION]: () => "Image region",
+    [TargetInputType.IMAGE_REGION_ON_PAGE]: () => "Image region on page",
     [TargetInputType.TABLE]: () => "Table",
     [TargetInputType.PDF]: () => "PDF document"
   });
@@ -89,7 +89,7 @@ function mkTypePart(): {type: AnBodyItemType } {
 
 function mkPidPart(input: PidInput): { id: string, idName?: string } {
   return {
-    id: input.pid, 
+    id: input.pid,
     ... input.pidName ? { idName: input.pidName } : {},
   };
 }
@@ -108,11 +108,11 @@ export function mkTarget(targetInput: TargetInput): AnTarget {
   const imgForm = targetInput as ImageRegionTargetInput;
   const tableForm = targetInput as TableTargetInput;
   const pdfForm = targetInput as PdfTargetInput;
-  
+
   return matchSwitch(targetInput.type, {
     [TargetInputType.PAGE]: () => ({
       ...mkPidPart(pageForm),
-      ...mkTypePart() 
+      ...mkTypePart()
     }),
     [TargetInputType.LINK]: () => ({
       ...mkPidPart(pageForm),
@@ -142,7 +142,7 @@ export function mkTarget(targetInput: TargetInput): AnTarget {
     }),
     [TargetInputType.PDF]: () => ({
       ...mkPidPart(pageForm),
-      ...mkPdfSelector(pdfForm.pageNumber, pdfForm.svgSelector ? mkSvgSelector(pdfForm.svgSelector) : undefined),
+      selector: mkPdfSelector(pdfForm.pageNumber, pdfForm.svgSelector ? mkSvgSelector(pdfForm.svgSelector) : undefined),
       ...mkTypePart()
     })
   });
