@@ -300,16 +300,24 @@ export function getLabelFromBody(anBody: AnBody): string {
 
 // Target {{{2
 
+export enum SelectorType {
+  TEXT_POSITION = "TextPositionSelector",
+  XPATH = "XPathSelector",
+  SVG = "SvgSelector",
+  PDF = "PdfSelector",
+  TABLE = "TableSelector"
+}
+
 // Text selection {{{3
 
 export interface TextPositionSelector {
-  type: "TextPositionSelector";
+  type: SelectorType.TEXT_POSITION;
   start: number;
   end: number;
 }
 
 export interface XPathTextSelector {
-  type: "XPathSelector";
+  type: SelectorType.XPATH;
   selectedText: string;
   value: string;
   refinedBy?: TextPositionSelector;
@@ -317,11 +325,11 @@ export interface XPathTextSelector {
 
 export function mkXPathTextSelector(selectedText: string, xpath: string, startOffset: number, endOffset: number): XPathTextSelector {
   return {
-    type: "XPathSelector",
+    type: SelectorType.XPATH,
     selectedText,
     value: xpath,
     refinedBy: {
-      type: "TextPositionSelector",
+      type: SelectorType.TEXT_POSITION,
       start: startOffset,
       end: endOffset
     }
@@ -331,13 +339,13 @@ export function mkXPathTextSelector(selectedText: string, xpath: string, startOf
 // SVG selection {{{3
 
 export interface SvgSelector {
-  type: "SvgSelector";
+  type: SelectorType.SVG;
   value: string;
 }
 
 export function mkSvgSelector(svg: string): SvgSelector {
   return {
-    type: "SvgSelector",
+    type: SelectorType.SVG;
     value: svg
   };
 }
@@ -377,7 +385,7 @@ export function printTableRange(tr: TableRange): string {
     [TableRangeType.ROWS]: () => {
       const r = tr as RowRange;
       return `Rows ${r.startRow}-${r.endRow}`;
-    }, 
+    },
     [TableRangeType.COLUMNS]: () => {
       const r = tr as ColumnRange;
       return `Columns ${r.startColumn}-${r.endColumn}`;
@@ -390,14 +398,14 @@ export function printTableRange(tr: TableRange): string {
 }
 
 export interface TableSelector {
-  type: "TableSelector";
+  type: SelectorType.TABLE;
   sheet: string;
   range?: TableRange;
 }
 
 export function mkTableSelector(sheet: string, range?: TableRange): TableSelector {
   return {
-    type: "TableSelector",
+    type: SelectorType.TABLE,
     sheet,
     range
   };
@@ -406,14 +414,14 @@ export function mkTableSelector(sheet: string, range?: TableRange): TableSelecto
 // PDF Selector {{{3
 
 export interface PdfSelector {
-  type: "PdfSelector";
+  type: SelectorType.PDF;
   pageNumber: number;
   selector?: SvgSelector;
 }
 
 export function mkPdfSelector(pageNumber: number, selector?: SvgSelector): PdfSelector {
   return {
-    type: "PdfSelector",
+    type: SelectorType.PDF,
     pageNumber,
     selector
   };
