@@ -301,7 +301,6 @@ export function getLabelFromBody(anBody: AnBody): string {
 // Target {{{2
 
 export enum SelectorType {
-  TEXT_POSITION = "TextPositionSelector",
   XPATH = "XPathSelector",
   SVG = "SvgSelector",
   PDF = "PdfSelector",
@@ -311,7 +310,7 @@ export enum SelectorType {
 // Text selection {{{3
 
 export interface TextPositionSelector {
-  type: SelectorType.TEXT_POSITION;
+  type: "TextPositionSelector";
   start: number;
   end: number;
 }
@@ -329,7 +328,7 @@ export function mkXPathTextSelector(selectedText: string, xpath: string, startOf
     selectedText,
     value: xpath,
     refinedBy: {
-      type: SelectorType.TEXT_POSITION,
+      type: "TextPositionSelector",
       start: startOffset,
       end: endOffset
     }
@@ -345,7 +344,7 @@ export interface SvgSelector {
 
 export function mkSvgSelector(svg: string): SvgSelector {
   return {
-    type: SelectorType.SVG;
+    type: SelectorType.SVG,
     value: svg
   };
 }
