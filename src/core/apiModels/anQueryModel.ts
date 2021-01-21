@@ -11,6 +11,7 @@ export interface GetAnQuery {
   download?: boolean;
   skip?: number;
   limit?: number;
+  catalog?: string;
 }
 
 export interface AnTargetsQuery {

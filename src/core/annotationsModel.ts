@@ -493,11 +493,12 @@ export interface Annotation {
   target: AnTarget;
   type: string;
   visibility: VisibilityEnum; // Web Annotation Model B2NOTE extension
+  catalogs?: Array<string>; // Web Annotation Model B2NOTE extension
 }
 
 export type AnnotationPartial = Partial<Annotation>;
 
-export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType, visibility: VisibilityEnum): Annotation {
+export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator, generator: AnGenerator, motivation: PurposeType, visibility: VisibilityEnum, catalog?: string): Annotation {
   const ts = utils.mkTimestamp();
   return {
     "@context": "http://www.w3.org/ns/anno/jsonld",
@@ -510,7 +511,8 @@ export function mkAnnotation(body: AnBody, target: AnTarget, creator: AnCreator,
     id: "",
     motivation,
     type: "Annotation",
-    visibility
+    visibility,
+    ...catalog ? { catalogs: [ catalog ] } : {}
   };
 }
 
@@ -521,7 +523,6 @@ export function getAnId(an: Annotation): ID {
 export function getCreatorId(an: Annotation): ID {
   return utils.extractId(an.creator.id);
 }
-
 
 export function getLabel(annotation: Annotation): string {
   return getLabelFromBody(annotation.body);
