@@ -21,6 +21,7 @@ export interface UserProfile {
   country: string;
   domainsIds?: Array<string>;
   experience: Experience;
+  admin?: boolean;
 }
 
 export type UserProfilePartial = Partial<UserProfile>;
