@@ -20,6 +20,7 @@ export type AnPID = PID;
 
 // Body Items {{{2
 
+// eslint-disable-next-line no-shadow
 export enum AnBodyItemType {
   COMPOSITE = "Composite",
   SPECIFIC_RESOURCE = "SpecificResource",
