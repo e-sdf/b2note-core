@@ -1,6 +1,6 @@
 // Annotations model according to <https://www.w3.org/TR/annotation-model>
 
-import _ from "lodash";
+import * as _ from "lodash";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import * as utils from "./utils";
 

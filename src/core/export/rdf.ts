@@ -1,5 +1,5 @@
-import _ from "lodash";
-import xml from "xmlbuilder";
+import * as _ from "lodash";
+import * as xml from "xmlbuilder";
 import { v4 as uuidv4 } from "uuid";
 import { matchSwitch } from "@babakness/exhaustive-type-checking";
 import type { PID, Annotation, AnGenerator, TripleAnBody } from "../annotationsModel";

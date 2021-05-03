@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _ from "lodash";
 import type { Domain } from "./domainModel";
 
 const ontologyRegisterUrl = "/ontology-register";
