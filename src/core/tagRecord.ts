@@ -1,4 +1,4 @@
-import * as anModel from "core/annotationsModel";
+import * as anModel from "./annotationsModel";
 
 export interface TagRecord {
   tag: string;
